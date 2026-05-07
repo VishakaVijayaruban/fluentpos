@@ -1,0 +1,48 @@
+You are a Domain-Driven Design (DDD) expert. Analyze the fluentpos repository 
+(https://github.com/fluentpos/fluentpos) and create a comprehensive 
+UBIQUITOUS_LANGUAGE.md file for it.
+
+The repo is a Point of Sale (POS) open-source system built with .NET and Angular.
+
+The document should:
+
+1. **Introduction** — Briefly explain what Ubiquitous Language is and why it matters 
+   for this project.
+
+2. **Bounded Contexts** — Identify and list the bounded contexts found in the codebase 
+   (e.g., Catalog, Sales, Inventory, People, Identity). For each bounded context:
+   - Name and short description
+   - Belongs to which module/namespace in the code
+
+3. **Glossary of Terms** — For each bounded context, list the key domain terms with:
+   - **Term**: The exact name used in code and conversations
+   - **Definition**: Plain-language explanation of what it means in this domain
+   - **Aliases / avoid**: Any synonyms to avoid to prevent ambiguity
+   - **Code reference**: Where it appears in the codebase (class, file, or namespace)
+
+   Cover at minimum these domains:
+   - **Catalog**: Product, Brand, Category, ProductImage, StockQuantity
+   - **Sales**: Order, OrderItem, Cart, Discount, Coupon, PaymentMethod, Transaction
+   - **Inventory**: Stock, StockEntry, Adjustment, Warehouse
+   - **People**: Customer, Staff, Loyalty, LoyaltyPoints
+   - **Identity**: User, Role, Permission, Token, RefreshToken
+
+4. **Domain Events** — List the key domain events (e.g., OrderPlaced, StockAdjusted, 
+   CustomerRegistered) with a short description of when they occur.
+
+5. **Aggregates & Entities** — List the main aggregates and entities per bounded context, 
+   distinguishing which is the aggregate root.
+
+6. **Value Objects** — List value objects used (e.g., Money, Address, ProductCode).
+
+7. **Ubiquitous Language Rules** — A short set of rules for the team:
+   - Always use domain terms in code, tests, docs, and conversations
+   - Never use generic terms like "data", "info", "stuff", "record" when a domain 
+     term exists
+   - Keep this document updated when new terms are introduced
+
+Format the output as a well-structured Markdown file ready to be placed at the root 
+of the repository. Use tables where helpful for the glossary. Include a last-updated 
+date placeholder at the top.
+
+output:UBIQUITOUS_LANGUAGE.md
