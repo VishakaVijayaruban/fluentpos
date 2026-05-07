@@ -18,8 +18,8 @@ namespace FluentPOS.Modules.Sales.Core.Extensions
     {
         public static IServiceCollection AddSalesCore(this IServiceCollection services)
         {
-            services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
             services.AddExtendedAttributeHandlersFromAssembly(Assembly.GetExecutingAssembly());
             services.AddExtendedAttributeCommandValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddExtendedAttributePaginatedFilterValidatorsFromAssembly(Assembly.GetExecutingAssembly());

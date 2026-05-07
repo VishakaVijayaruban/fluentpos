@@ -13,6 +13,7 @@ using FluentPOS.Modules.Sales.Core.Features.Sales.Queries;
 using FluentPOS.Shared.Core.Constants;
 using FluentPOS.Shared.DTOs.Sales.Orders;
 using Microsoft.AspNetCore.Authorization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentPOS.Modules.Sales.Controllers

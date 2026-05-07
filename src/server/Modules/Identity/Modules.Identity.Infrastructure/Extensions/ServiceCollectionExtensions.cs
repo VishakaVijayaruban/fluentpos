@@ -37,7 +37,7 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Extensions
     {
         public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
             services
                 .AddHttpContextAccessor()
                 .AddScoped<ICurrentUser, CurrentUser>()

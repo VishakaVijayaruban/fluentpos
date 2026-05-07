@@ -28,6 +28,7 @@ using FluentPOS.Shared.Infrastructure.Middlewares;
 using FluentPOS.Shared.Infrastructure.Persistence;
 using FluentPOS.Shared.Infrastructure.Services;
 using FluentPOS.Shared.Infrastructure.Swagger.Filters;
+using Asp.Versioning;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -69,7 +70,7 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
 
         internal static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration config)
         {
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddPersistenceSettings(config);
             services
@@ -81,7 +82,8 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
             {
                 o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(1, 0);
-            });
+            }).AddMvc().AddApiExplorer();
+            services.AddFluentValidationAutoValidation();
             services.AddControllers()
                 .ConfigureApplicationPartManager(manager =>
                 {

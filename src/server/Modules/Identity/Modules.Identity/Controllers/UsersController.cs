@@ -11,6 +11,7 @@ using FluentPOS.Modules.Identity.Core.Abstractions;
 using FluentPOS.Shared.Core.Constants;
 using FluentPOS.Shared.DTOs.Identity.Users;
 using Microsoft.AspNetCore.Authorization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentPOS.Modules.Identity.Controllers

@@ -15,6 +15,7 @@ using FluentPOS.Shared.Core.Constants;
 using FluentPOS.Shared.Core.Features.Common.Filters;
 using FluentPOS.Shared.DTOs.People.CartItems;
 using Microsoft.AspNetCore.Authorization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentPOS.Modules.People.Controllers

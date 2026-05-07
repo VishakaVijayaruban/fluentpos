@@ -16,6 +16,7 @@ using FluentPOS.Shared.Core.Features.ExtendedAttributes.Commands;
 using FluentPOS.Shared.Core.Features.ExtendedAttributes.Filters;
 using FluentPOS.Shared.Infrastructure.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentPOS.Modules.Catalog.Controllers.ExtendedAttributes

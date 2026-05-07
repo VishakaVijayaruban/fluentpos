@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentPOS.Shared.Core.Interfaces.Services.Identity;
 using FluentPOS.Shared.DTOs.Identity.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentPOS.Modules.Identity.Controllers

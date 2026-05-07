@@ -8,7 +8,7 @@
 
 using System.Reflection;
 using FluentPOS.Modules.People.Core.Abstractions;
-using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentPOS.Modules.People.Infrastructure.Extensions
@@ -17,7 +17,8 @@ namespace FluentPOS.Modules.People.Infrastructure.Extensions
     {
         internal static IMvcBuilder AddPeopleValidation(this IMvcBuilder builder)
         {
-            return builder.AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetAssembly(typeof(IPeopleDbContext))));
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(IPeopleDbContext)));
+            return builder;
         }
     }
 }
