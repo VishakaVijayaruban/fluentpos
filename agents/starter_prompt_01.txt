@@ -1,0 +1,1 @@
+create a .ps1 file in the root of the project, where it will run all the existing ef core migrations and create the database

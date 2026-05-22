@@ -1,0 +1,2 @@
+Unable to create a 'DbContext' of type 'CatalogDbContext'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions`1[FluentPOS.Modules.Catalog.Infrastructure.Persistence.CatalogDbContext]' while attempting to activate 'FluentPOS.Modules.Catalog.Infrastructure.Persistence.CatalogDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
+Write-Error:     Migration failed for CatalogDbContext (exit code 1)
