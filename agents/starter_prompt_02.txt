@@ -1,0 +1,8 @@
+why the connection string is in 3 places, 
+src\server\API\appsettings.json
+and
+src\server\Modules\Catalog\Modules.Catalog.Infrastructure\Persistence\CatalogDbContextFactory.cs
+and
+src\server\Modules\Identity\Modules.Identity.Infrastructure\Persistence\IdentityDbContextFactory.cs
+
+Is this needed or can we use on for all 3?

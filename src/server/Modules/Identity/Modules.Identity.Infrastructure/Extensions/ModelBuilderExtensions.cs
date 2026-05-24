@@ -71,10 +71,22 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Extensions
             builder.Entity<UserExtendedAttribute>(entity =>
             {
                 entity.ToTable("UserExtendedAttributes");
+                entity.Property(e => e.EntityId).IsRequired();
+                entity.HasOne(e => e.Entity)
+                    .WithMany(e => e.ExtendedAttributes)
+                    .HasForeignKey(e => e.EntityId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<RoleExtendedAttribute>(entity =>
             {
                 entity.ToTable("RoleExtendedAttributes");
+                entity.Property(e => e.EntityId).IsRequired();
+                entity.HasOne(e => e.Entity)
+                    .WithMany(e => e.ExtendedAttributes)
+                    .HasForeignKey(e => e.EntityId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

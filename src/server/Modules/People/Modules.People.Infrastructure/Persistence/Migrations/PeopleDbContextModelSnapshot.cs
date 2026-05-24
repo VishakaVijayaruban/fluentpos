@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
+#nullable disable
+
 namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
@@ -16,9 +18,10 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("People")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.8")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.Cart", b =>
                 {
@@ -30,13 +33,13 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.CartItem", b =>
@@ -58,7 +61,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.Customer", b =>
@@ -84,7 +87,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.ExtendedAttributes.CartExtendedAttribute", b =>
@@ -97,7 +100,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("Decimal")
                         .HasColumnType("numeric");
@@ -137,7 +140,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EntityId");
 
-                    b.ToTable("CartExtendedAttributes");
+                    b.ToTable("CartExtendedAttributes", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.ExtendedAttributes.CartItemExtendedAttribute", b =>
@@ -150,7 +153,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("Decimal")
                         .HasColumnType("numeric");
@@ -190,7 +193,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EntityId");
 
-                    b.ToTable("CartItemExtendedAttributes");
+                    b.ToTable("CartItemExtendedAttributes", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.ExtendedAttributes.CustomerExtendedAttribute", b =>
@@ -203,7 +206,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("Decimal")
                         .HasColumnType("numeric");
@@ -243,7 +246,7 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EntityId");
 
-                    b.ToTable("CustomerExtendedAttributes");
+                    b.ToTable("CustomerExtendedAttributes", "People");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.People.Core.Entities.Cart", b =>

@@ -50,7 +50,15 @@
       "Bash(xargs sed -i 's|<TargetFramework>net5\\\\.0</TargetFramework>|<TargetFramework>net10.0</TargetFramework>|g')",
       "Bash(xargs sed -i 's/services\\\\.AddMediatR\\(Assembly\\\\.GetExecutingAssembly\\(\\)\\)/services.AddMediatR\\(cfg => cfg.RegisterServicesFromAssembly\\(Assembly.GetExecutingAssembly\\(\\)\\)\\)/g')",
       "Bash(Get-ChildItem -Path \"D:\\\\src\\\\fluentpos\\\\src\\\\server\\\\Modules\" -Directory)",
-      "Bash(Select-Object -ExpandProperty Name)"
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(Select-String \"error\")",
+      "Bash(Select-String -NotMatch \"SA\\\\d+\")",
+      "PowerShell(dotnet build *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\src\\\\fluentpos\\\\src\\\\server\\\\Modules\\\\Catalog\\\\Modules.Catalog.Infrastructure\" -Recurse -File)",
+      "Bash(dir *)",
+      "Bash(dotnet ef *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(xargs ls -la)"
     ],
     "deny": [
       "Read(**/*.log)",
