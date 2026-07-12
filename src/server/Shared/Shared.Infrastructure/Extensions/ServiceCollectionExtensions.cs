@@ -77,6 +77,9 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
                 .AddDatabaseContext<ApplicationDbContext>()
                 .AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
 
+            services.AddDistributedCache(config);
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDbContext>("database", tags: new[] { "ready" });
             services.AddScoped<IEventLogger, EventLogger>();
             services.AddApiVersioning(o =>
             {
@@ -126,6 +129,25 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
         {
             return services
                 .Configure<PersistenceSettings>(config.GetSection(nameof(PersistenceSettings)));
+        }
+
+        private static IServiceCollection AddDistributedCache(this IServiceCollection services, IConfiguration config)
+        {
+            var cacheSettings = config.GetSection(nameof(CacheSettings)).Get<CacheSettings>() ?? new CacheSettings();
+            if (cacheSettings.UseRedis)
+            {
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = cacheSettings.RedisConnectionString;
+                    options.InstanceName = "fluentpos:";
+                });
+            }
+            else
+            {
+                services.AddDistributedMemoryCache();
+            }
+
+            return services;
         }
 
         private static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)

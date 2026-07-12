@@ -20,7 +20,7 @@ namespace FluentPOS.Modules.Inventory.Core.Entities
         public Stock(Guid productId)
         {
             ProductId = productId;
-            LastUpdatedOn = DateTime.Now;
+            LastUpdatedOn = DateTime.UtcNow;
         }
 
         public Guid ProductId { get; private set; }
@@ -32,13 +32,13 @@ namespace FluentPOS.Modules.Inventory.Core.Entities
         public void IncreaseQuantity(decimal quantity)
         {
             AvailableQuantity += quantity;
-            LastUpdatedOn = DateTime.Now;
+            LastUpdatedOn = DateTime.UtcNow;
         }
 
         public void ReduceQuantity(decimal quantity)
         {
             AvailableQuantity -= quantity;
-            LastUpdatedOn = DateTime.Now;
+            LastUpdatedOn = DateTime.UtcNow;
         }
     }
 }

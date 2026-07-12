@@ -19,5 +19,7 @@ namespace FluentPOS.Modules.Catalog.Core.Abstractions
         public DbSet<Brand> Brands { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<VatRate> VatRates { get; set; }
     }
 }

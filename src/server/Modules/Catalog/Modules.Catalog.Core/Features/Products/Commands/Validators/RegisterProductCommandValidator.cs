@@ -32,6 +32,9 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands.Validators
             RuleFor(c => c.BarcodeSymbology)
                 .NotEmpty().WithMessage(localizer["The {PropertyName} property cannot be empty."])
                 .Length(5, 150).WithMessage(localizer["The {PropertyName} property must have between 5 and 150 characters."]);
+            RuleFor(c => c.Barcode)
+                .Length(3, 32).WithMessage(localizer["The {PropertyName} property must have between 3 and 32 characters."])
+                .When(c => !string.IsNullOrWhiteSpace(c.Barcode));
         }
     }
 }

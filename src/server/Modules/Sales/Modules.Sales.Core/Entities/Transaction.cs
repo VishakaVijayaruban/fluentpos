@@ -25,5 +25,18 @@ namespace FluentPOS.Modules.Sales.Core.Entities
         public decimal TenderedAmount { get; set; }
 
         public string Note { get; set; }
+
+        public static Transaction Record(Guid orderId, PaymentType paymentType, decimal amount, decimal tenderedAmount, string note)
+        {
+            return new Transaction
+            {
+                OrderId = orderId,
+                PaymentType = paymentType,
+                Amount = amount,
+                TenderedAmount = tenderedAmount,
+                Note = note,
+                TimeStamp = DateTime.UtcNow
+            };
+        }
     }
 }

@@ -34,6 +34,22 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
             {
                 entity.ToTable(name: "Products");
 
+                entity.Property(p => p.Barcode)
+                    .HasMaxLength(32);
+
+                // Barcodes are optional but must be unique when present (multiple NULLs allowed).
+                var barcodeIndex = entity.HasIndex(p => p.Barcode)
+                    .IsUnique();
+                if (persistenceOptions.UseMsSql)
+                {
+                    barcodeIndex.HasFilter("[Barcode] IS NOT NULL");
+                }
+
+                entity.HasOne(p => p.VatRate)
+                    .WithMany()
+                    .HasForeignKey(p => p.VatRateId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
                 if (persistenceOptions.UseMsSql)
                 {
                     entity.Property(p => p.Price)
@@ -43,6 +59,18 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
                     entity.Property(p => p.AlertQuantity)
                         .HasColumnType("decimal(23, 2)");
                 }
+            });
+
+            builder.Entity<VatRate>(entity =>
+            {
+                entity.ToTable(name: "VatRates");
+
+                entity.Property(v => v.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasIndex(v => v.Name)
+                    .IsUnique();
             });
 
             builder.Entity<BrandExtendedAttribute>(entity =>

@@ -87,14 +87,16 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Extensions
                 })
                 .AddJwtBearer(bearer =>
                 {
-                    bearer.RequireHttpsMetadata = false;
+                    bearer.RequireHttpsMetadata = jwtSettings.RequireHttpsMetadata;
                     bearer.SaveToken = true;
                     bearer.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = jwtSettings.Audience,
                         RoleClaimType = ClaimTypes.Role,
                         ClockSkew = TimeSpan.Zero
                     };

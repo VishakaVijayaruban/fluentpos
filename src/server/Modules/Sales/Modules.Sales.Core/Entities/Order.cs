@@ -43,7 +43,13 @@ namespace FluentPOS.Modules.Sales.Core.Entities
 
         public static Order InitializeOrder()
         {
-            return new Order { TimeStamp = DateTime.Now };
+            // UTC is required: the persisted column is 'timestamp with time zone'.
+            return new Order { TimeStamp = DateTime.UtcNow };
+        }
+
+        public void MarkAsPaid()
+        {
+            IsPaid = true;
         }
 
         public void AddCustomer(GetCustomerByIdResponse customer)
@@ -74,6 +80,10 @@ namespace FluentPOS.Modules.Sales.Core.Entities
                 Price = quantity * rate,
                 Total = (quantity * rate) + (tax * quantity)
             });
+
+            SubTotal += quantity * rate;
+            Tax += tax * quantity;
+            Total = SubTotal + Tax - Discount;
         }
     }
 }

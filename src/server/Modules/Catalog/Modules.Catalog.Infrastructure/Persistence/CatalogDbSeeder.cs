@@ -39,6 +39,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
         {
             try
             {
+                AddVatRates();
                 AddBrands();
                 AddCategories();
                 AddProducts();
@@ -47,6 +48,22 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
             catch (Exception)
             {
                 _logger.LogError(_localizer["An error occurred while seeding Catalog data."]);
+            }
+        }
+
+        private void AddVatRates()
+        {
+            if (!_db.VatRates.Any())
+            {
+                // UK VAT rates; fixed ids keep references stable across environments.
+                _db.VatRates.AddRange(new List<VatRate>
+                {
+                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000001"), Name = "Zero", Rate = 0m },
+                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000002"), Name = "Reduced", Rate = 5m },
+                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000003"), Name = "Standard", Rate = 20m }
+                });
+                _db.SaveChanges();
+                _logger.LogInformation(_localizer["Seeded VAT Rates."]);
             }
         }
 

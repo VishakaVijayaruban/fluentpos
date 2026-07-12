@@ -12,6 +12,13 @@ namespace FluentPOS.Modules.Identity.Core.Settings
     {
         public string Key { get; set; }
 
+        public string Issuer { get; set; }
+
+        public string Audience { get; set; }
+
+        // Only disable for local development over plain HTTP.
+        public bool RequireHttpsMetadata { get; set; } = true;
+
         public int TokenExpirationInMinutes { get; set; }
 
         public int RefreshTokenExpirationInDays { get; set; }

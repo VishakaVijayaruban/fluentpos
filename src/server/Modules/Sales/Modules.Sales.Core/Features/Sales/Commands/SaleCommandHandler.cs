@@ -73,7 +73,11 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
                 }
             }
 
+            order.MarkAsPaid();
+            var transaction = Transaction.Record(order.Id, command.PaymentType, order.Total, command.TenderedAmount, command.Note);
+
             await _salesContext.Orders.AddAsync(order, cancellationToken);
+            await _salesContext.Transactions.AddAsync(transaction, cancellationToken);
             await _salesContext.SaveChangesAsync(cancellationToken);
             await _cartService.RemoveCartAsync(command.CartId);
             foreach (var product in order.Products)

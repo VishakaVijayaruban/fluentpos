@@ -9,11 +9,14 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using FluentPOS.Shared.Core.Interfaces.Services;
+using FluentPOS.Shared.Core.Settings;
 using FluentPOS.Shared.Infrastructure.Middlewares;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 [assembly: InternalsVisibleTo("FluentPOS.Bootstrapper")]
@@ -24,6 +27,9 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
     {
         public static IApplicationBuilder UseSharedInfrastructure(this IApplicationBuilder app)
         {
+            // Must run before anything touches the database (the Hangfire dashboard resolves its storage eagerly).
+            app.Initialize();
+
             app.UseMiddleware<GlobalExceptionHandler>();
             app.UseRouting();
 
@@ -48,9 +54,13 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
+                {
+                    Predicate = _ => false
+                });
+                endpoints.MapHealthChecks("/health/ready");
             });
             app.UseSwaggerDocumentation();
-            app.Initialize();
 
             return app;
         }
@@ -59,11 +69,22 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
 
-            var initializers = serviceScope.ServiceProvider.GetServices<IDatabaseSeeder>();
+            var persistenceSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<PersistenceSettings>>().Value;
 
-            foreach (var initializer in initializers)
+            if (persistenceSettings.MigrateOnStartup)
             {
-                initializer.Initialize();
+                foreach (var migrator in serviceScope.ServiceProvider.GetServices<IDatabaseMigrator>())
+                {
+                    migrator.Migrate();
+                }
+            }
+
+            if (persistenceSettings.SeedOnStartup)
+            {
+                foreach (var initializer in serviceScope.ServiceProvider.GetServices<IDatabaseSeeder>())
+                {
+                    initializer.Initialize();
+                }
             }
 
             return app;

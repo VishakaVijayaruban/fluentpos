@@ -33,6 +33,10 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
 
         public string TaxMethod { get; set; }
 
+        public Guid? VatRateId { get; set; }
+
+        public string Barcode { get; set; }
+
         public string BarcodeSymbology { get; set; }
 
         public bool IsAlert { get; set; }

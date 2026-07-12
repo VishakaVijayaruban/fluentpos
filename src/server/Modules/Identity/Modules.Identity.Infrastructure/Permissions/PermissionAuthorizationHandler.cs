@@ -26,9 +26,10 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Permissions
                 await Task.CompletedTask;
             }
 
+            // Permission claims are embedded in our own signed JWT, so the token signature
+            // (validated with issuer/audience checks) is what makes them trustworthy.
             var permissions = context.User.Claims.Where(x => x.Type == ApplicationClaimTypes.Permission &&
-                                                                x.Value == requirement.Permission &&
-                                                                x.Issuer == "LOCAL AUTHORITY");
+                                                                x.Value == requirement.Permission);
             if (permissions.Any())
             {
                 context.Succeed(requirement);

@@ -1,0 +1,46 @@
+services:
+  api:
+    build:
+      context: ./src/server
+    ports:
+      - "5000:5000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ApplicationSettings__ApiUrl: http://localhost:5000/
+      PersistenceSettings__ConnectionStrings__postgres: "Host=postgres;Database=fluentpos;Username=postgres;Password=${POSTGRES_PASSWORD:-postgres}"
+      # Fine for a single API container; disable both and run migrations as a release step when scaling out.
+      PersistenceSettings__MigrateOnStartup: "true"
+      PersistenceSettings__SeedOnStartup: "true"
+      CacheSettings__UseRedis: "true"
+      CacheSettings__RedisConnectionString: "redis:6379"
+      JwtSettings__Key: "${JWT_KEY:?Set JWT_KEY in .env (32+ characters)}"
+      # No TLS inside the compose network; terminate TLS at a reverse proxy in real deployments.
+      JwtSettings__RequireHttpsMetadata: "false"
+      CorsSettings__Url: "${CORS_URL:-http://localhost:4200}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fluentpos
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fluentpos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+
+volumes:
+  postgres-data:
+  redis-data:

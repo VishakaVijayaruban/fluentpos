@@ -16,13 +16,13 @@ namespace FluentPOS.Shared.Core.Entities
         {
             Entity = entity;
             MonthYearString = DateTime.Now.ToString("MMyy");
-            LastUpdateOn = DateTime.Now;
+            LastUpdateOn = DateTime.UtcNow;
             Count = 1;
         }
 
         public void Increment()
         {
-            LastUpdateOn = DateTime.Now;
+            LastUpdateOn = DateTime.UtcNow;
             Count++;
         }
 

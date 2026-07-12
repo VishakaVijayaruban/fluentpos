@@ -29,7 +29,7 @@ namespace FluentPOS.Modules.People.Core.Entities
         {
             CartItems = new List<CartItem>();
             ExtendedAttributes = new HashSet<CartExtendedAttribute>();
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
     }
 }

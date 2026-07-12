@@ -39,13 +39,9 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Queries
 
         public async Task<PaginatedResult<GetSalesResponse>> Handle(GetSalesQuery request, CancellationToken cancellationToken)
         {
-            var queryable = _context.Orders.AsNoTracking()
-                .ProjectTo<GetSalesResponse>(_mapper.ConfigurationProvider)
-                .OrderBy(x => x.TimeStamp)
-                .AsQueryable();
-
-            // string ordering = new OrderByConverter().Convert(request.OrderBy);
-            // queryable = !string.IsNullOrWhiteSpace(ordering) ? queryable.OrderBy(ordering) : queryable.OrderBy(a => a.TimeStamp);
+            // Filter and order on the entity, then project: EF cannot translate ordering
+            // applied on top of the ProjectTo projection.
+            var queryable = _context.Orders.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrEmpty(request.SearchString))
             {
@@ -58,7 +54,8 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Queries
             }
 
             var saleList = await queryable
-                .AsNoTracking()
+                .OrderBy(x => x.TimeStamp)
+                .ProjectTo<GetSalesResponse>(_mapper.ConfigurationProvider)
                 .ToPaginatedListAsync(request.PageNumber, request.PageSize);
 
             if (saleList == null)

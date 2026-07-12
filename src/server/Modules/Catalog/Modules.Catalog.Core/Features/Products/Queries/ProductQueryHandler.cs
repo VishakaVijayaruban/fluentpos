@@ -53,10 +53,9 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Queries
         public async Task<PaginatedResult<GetProductsResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
 #pragma warning restore RCS1046 // Asynchronous method name should end with 'Async'.
         {
-            var queryable = _context.Products.AsNoTracking()
-                .ProjectTo<GetProductsResponse>(_mapper.ConfigurationProvider)
-                .OrderBy(x => x.Id)
-                .AsQueryable();
+            // Filter and order on the entity, then project: EF cannot translate ordering
+            // applied on top of the ProjectTo join projection (BrandName/CategoryName).
+            var queryable = _context.Products.AsNoTracking().AsQueryable();
 
             if (request.BrandIds.Any())
             {
@@ -68,20 +67,21 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Queries
                 queryable = queryable.Where(x => request.CategoryIds.Contains(x.CategoryId));
             }
 
-            string ordering = new OrderByConverter().Convert(request.OrderBy);
-            queryable = !string.IsNullOrWhiteSpace(ordering) ? queryable.OrderBy(ordering) : queryable.OrderBy(a => a.Id);
-
             if (!string.IsNullOrEmpty(request.SearchString))
             {
                 queryable = queryable.Where(x => EF.Functions.Like(x.Name.ToLower(), $"%{request.SearchString.ToLower()}%")
                 || EF.Functions.Like(x.LocaleName.ToLower(), $"%{request.SearchString.ToLower()}%")
                 || EF.Functions.Like(x.Detail.ToLower(), $"%{request.SearchString.ToLower()}%")
+                || EF.Functions.Like(x.Barcode.ToLower(), $"%{request.SearchString.ToLower()}%")
                 || EF.Functions.Like(x.BarcodeSymbology.ToLower(), $"%{request.SearchString.ToLower()}%")
                 || EF.Functions.Like(x.Id.ToString().ToLower(), $"%{request.SearchString.ToLower()}%"));
             }
 
+            string ordering = new OrderByConverter().Convert(request.OrderBy);
+            queryable = !string.IsNullOrWhiteSpace(ordering) ? queryable.OrderBy(ordering) : queryable.OrderBy(a => a.Id);
+
             var productList = await queryable
-                .AsNoTracking()
+                .ProjectTo<GetProductsResponse>(_mapper.ConfigurationProvider)
                 .ToPaginatedListAsync(request.PageNumber, request.PageSize);
 
             if (productList == null)

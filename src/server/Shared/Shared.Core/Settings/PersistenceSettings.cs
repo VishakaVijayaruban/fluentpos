@@ -14,6 +14,11 @@ namespace FluentPOS.Shared.Core.Settings
 
         public bool UsePostgres { get; set; }
 
+        // Disable both in multi-replica deployments and run migrations/seeding as a dedicated release step instead.
+        public bool MigrateOnStartup { get; set; } = true;
+
+        public bool SeedOnStartup { get; set; } = true;
+
         public PersistenceConnectionStrings ConnectionStrings { get; set; }
 
         public class PersistenceConnectionStrings

@@ -37,6 +37,13 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
 
         public string TaxMethod { get; set; }
 
+        public Guid? VatRateId { get; set; }
+
+        public virtual VatRate VatRate { get; set; }
+
+        // The scanned value (EAN/UPC/PLU); BarcodeSymbology only names the encoding.
+        public string Barcode { get; set; }
+
         public string BarcodeSymbology { get; set; }
 
         public bool IsAlert { get; set; }

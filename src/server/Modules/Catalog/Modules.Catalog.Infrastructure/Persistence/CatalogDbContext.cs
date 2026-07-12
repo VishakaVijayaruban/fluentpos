@@ -51,6 +51,8 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
 
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<VatRate> VatRates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

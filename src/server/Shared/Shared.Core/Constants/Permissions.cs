@@ -141,6 +141,13 @@ namespace FluentPOS.Shared.Core.Constants
             public const string Remove = "Permissions.Products.Remove";
         }
 
+        [DisplayName("VatRates")]
+        [Description("VAT Rates Permissions")]
+        public static class VatRates
+        {
+            public const string ViewAll = "Permissions.VatRates.ViewAll";
+        }
+
         [DisplayName("Products Extended Attributes")]
         [Description("Products Extended Attributes Permissions")]
         public static class ProductsExtendedAttributes

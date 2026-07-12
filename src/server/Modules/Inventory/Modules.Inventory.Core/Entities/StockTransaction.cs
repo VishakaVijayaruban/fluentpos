@@ -20,7 +20,7 @@ namespace FluentPOS.Modules.Inventory.Core.Entities
             Quantity = quantity;
             Type = type;
             ReferenceNumber = referenceNumber;
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
 
         public Guid ProductId { get; private set; }

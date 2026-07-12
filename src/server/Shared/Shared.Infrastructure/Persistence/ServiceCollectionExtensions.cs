@@ -7,6 +7,7 @@
 // --------------------------------------------------------------------------------------------------
 
 using FluentPOS.Shared.Core.Extensions;
+using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Settings;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -32,6 +33,7 @@ namespace FluentPOS.Shared.Infrastructure.Persistence
                 services.AddMSSQL<T>(connectionString);
             }
 
+            services.AddTransient<IDatabaseMigrator, DatabaseMigrator<T>>();
             return services;
         }
 
@@ -39,9 +41,6 @@ namespace FluentPOS.Shared.Infrastructure.Persistence
             where T : DbContext
         {
             services.AddDbContext<T>(m => m.UseNpgsql(connectionString, e => e.MigrationsAssembly(typeof(T).Assembly.FullName)));
-            using var scope = services.BuildServiceProvider().CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<T>();
-            dbContext.Database.Migrate();
             services.AddHangfire(x => x.UsePostgreSqlStorage(connectionString));
             return services;
         }
@@ -52,10 +51,6 @@ namespace FluentPOS.Shared.Infrastructure.Persistence
         {
             services.AddDbContext<T>(m => m.UseSqlServer(connectionString, e => e.MigrationsAssembly(typeof(T).Assembly.FullName)));
             services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
-            using var scope = services.BuildServiceProvider().CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<T>();
-            dbContext.Database.Migrate();
-
             return services;
         }
     }

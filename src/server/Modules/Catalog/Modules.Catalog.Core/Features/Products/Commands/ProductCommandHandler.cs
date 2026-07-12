@@ -55,12 +55,14 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
         public async Task<Result<Guid>> Handle(RegisterProductCommand command, CancellationToken cancellationToken)
 #pragma warning restore RCS1046 // Asynchronous method name should end with 'Async'.
         {
-            if (await _context.Products.AnyAsync(p => p.BarcodeSymbology == command.BarcodeSymbology, cancellationToken))
+            if (!string.IsNullOrWhiteSpace(command.Barcode)
+                && await _context.Products.AnyAsync(p => p.Barcode == command.Barcode, cancellationToken))
             {
                 throw new CatalogException(_localizer["Barcode already exists."], HttpStatusCode.BadRequest);
             }
 
             var product = _mapper.Map<Product>(command);
+            await ApplyVatRateAsync(product, command.VatRateId, cancellationToken);
             var uploadRequest = command.UploadRequest;
             if (uploadRequest != null)
             {
@@ -78,7 +80,8 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
         public async Task<Result<Guid>> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
 #pragma warning restore RCS1046 // Asynchronous method name should end with 'Async'.
         {
-            if (await _context.Products.Where(p => p.Id != command.Id).AnyAsync(p => p.BarcodeSymbology == command.BarcodeSymbology, cancellationToken))
+            if (!string.IsNullOrWhiteSpace(command.Barcode)
+                && await _context.Products.Where(p => p.Id != command.Id).AnyAsync(p => p.Barcode == command.Barcode, cancellationToken))
             {
                 throw new CatalogException(_localizer["Barcode already exists."], HttpStatusCode.BadRequest);
             }
@@ -88,6 +91,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
             if (product != null)
             {
                 product = _mapper.Map<Product>(command);
+                await ApplyVatRateAsync(product, command.VatRateId, cancellationToken);
                 var uploadRequest = command.UploadRequest;
                 if (uploadRequest != null)
                 {
@@ -124,6 +128,23 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
             {
                 throw new CatalogException(_localizer["Product Not Found!"], HttpStatusCode.NotFound);
             }
+        }
+
+        // The VAT rate table is the source of truth for Tax whenever a rate is linked.
+        private async Task ApplyVatRateAsync(Product product, Guid? vatRateId, CancellationToken cancellationToken)
+        {
+            if (vatRateId == null)
+            {
+                return;
+            }
+
+            var vatRate = await _context.VatRates.AsNoTracking().FirstOrDefaultAsync(v => v.Id == vatRateId, cancellationToken);
+            if (vatRate == null)
+            {
+                throw new CatalogException(_localizer["VAT Rate Not Found!"], HttpStatusCode.NotFound);
+            }
+
+            product.Tax = vatRate.Rate;
         }
     }
 }

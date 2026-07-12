@@ -111,7 +111,7 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
                 throw new IdentityException(_localizer["User Not Found."], statusCode: HttpStatusCode.NotFound);
             }
 
-            if (user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
                 throw new IdentityException(_localizer["Invalid Client Token."], statusCode: HttpStatusCode.Unauthorized);
             }
@@ -168,6 +168,8 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {
             var token = new JwtSecurityToken(
+               issuer: _config.Issuer,
+               audience: _config.Audience,
                claims: claims,
                expires: DateTime.UtcNow.AddMinutes(_config.TokenExpirationInMinutes),
                signingCredentials: signingCredentials);
@@ -181,8 +183,13 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Key)),
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidIssuer = _config.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _config.Audience,
+
+                // The token being refreshed is expected to be expired; the refresh token guards the flow.
+                ValidateLifetime = false,
                 RoleClaimType = ClaimTypes.Role,
                 ClockSkew = TimeSpan.Zero
             };
