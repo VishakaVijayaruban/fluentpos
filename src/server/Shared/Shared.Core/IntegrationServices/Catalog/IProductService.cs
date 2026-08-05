@@ -21,5 +21,12 @@ namespace FluentPOS.Shared.Core.IntegrationServices.Catalog
         /// central one.
         /// </summary>
         Task<Result<GetProductByIdResponse>> GetDetailsAsync(Guid productId, Guid? storeId = null);
+
+        /// <summary>
+        /// Applies a wholesaler price-file line to the product with the given barcode.
+        /// Updates the central cost (and sell price when provided). Returns false when no
+        /// product carries that barcode.
+        /// </summary>
+        Task<bool> UpdatePricingByBarcodeAsync(string barcode, decimal cost, decimal? sellPrice);
     }
 }

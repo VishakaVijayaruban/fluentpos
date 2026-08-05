@@ -47,5 +47,15 @@ namespace FluentPOS.Modules.Purchasing.Controllers
         {
             return Ok(await Mediator.Send(new RemoveSupplierCommand { Id = id }));
         }
+
+        // Wholesaler price-file import (CSV: barcode,cost[,sellPrice]); matches products by barcode.
+        [HttpPost("{id}/import-pricefile")]
+        [Authorize(Policy = Permissions.Suppliers.ImportPrices)]
+        public async Task<IActionResult> ImportPriceFileAsync(Guid id, [FromBody] ImportSupplierPriceFileCommand command)
+        {
+            command ??= new ImportSupplierPriceFileCommand();
+            command.SupplierId = id;
+            return Ok(await Mediator.Send(command));
+        }
     }
 }

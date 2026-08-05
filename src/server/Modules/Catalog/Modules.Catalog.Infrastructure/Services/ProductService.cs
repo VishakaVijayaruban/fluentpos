@@ -58,5 +58,23 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Services
 
             return response;
         }
+
+        public async Task<bool> UpdatePricingByBarcodeAsync(string barcode, decimal cost, decimal? sellPrice)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Barcode == barcode);
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.Cost = cost;
+            if (sellPrice.HasValue)
+            {
+                product.Price = sellPrice.Value;
+            }
+
+            await _context.SaveChangesAsync(default);
+            return true;
+        }
     }
 }
