@@ -117,6 +117,7 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
             order.MarkAsPaid();
             var transaction = Transaction.Record(order.Id, command.PaymentType, order.Total, command.TenderedAmount, command.Note, storeId, order.TillSessionId);
 
+            order.AddDomainEvent(new FluentPOS.Shared.Core.IntegrationEvents.Sales.OrderRegisteredEvent(order.Id, storeId, order.ReferenceNumber, order.SubTotal, order.Tax, order.Total, order.TimeStamp));
             await _salesContext.Orders.AddAsync(order, cancellationToken);
             await _salesContext.Transactions.AddAsync(transaction, cancellationToken);
             await _salesContext.SaveChangesAsync(cancellationToken);
@@ -174,6 +175,7 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
                 order.StoreId,
                 command.TillSessionId);
 
+            order.AddDomainEvent(new FluentPOS.Shared.Core.IntegrationEvents.Sales.OrderRefundedEvent(order.Id, order.StoreId, order.ReferenceNumber, order.Total, DateTime.UtcNow));
             await _salesContext.Transactions.AddAsync(refund, cancellationToken);
             await _salesContext.SaveChangesAsync(cancellationToken);
 
