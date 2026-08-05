@@ -306,16 +306,38 @@ Prepares the ground; no functional change visible to users.
    email/password rather than the PIN flow, and queued sales rejected as permanently invalid are
    dropped client-side (server-side dead-letter capture would be better).
 
-### Phase 4 — Chain & franchise layer
-1. Multi-organization: franchisee orgs, franchisor macro views, cross-org consolidated reporting.
-2. Reporting module: event-projected read models (sales by store/hour/category, margin, shrinkage),
-   replacing "query the transactional tables harder."
-3. Royalty triggers: periodic jobs off sales integration events computing royalty per franchise
-   agreement.
-4. Wholesaler integrations (Booker/Bestway/Nisa): import price files/EAN catalogs mapping to
-   Products via barcode; export POs. Design as adapters in the Purchasing module.
-5. Public API + webhooks for delivery platforms (Snappy Shopper, Deliveroo) — the API-driven
-   surface already exists; this adds outbound eventing and partner auth.
+### Phase 4 — Chain & franchise layer — ✅ DONE (2026-08-05, webhooks deferred)
+1. ✅ Multi-organization: `Organization.RoyaltyRatePercent` + franchisee onboarding API
+   (`POST organization/organizations`); stores movable between organizations
+   (`UpdateStoreCommand.OrganizationId`); `FluentUser.OrganizationId` → `orgId` JWT claim →
+   `ITenantContext.OrganizationId`. Seeded scenario: franchisor "FluentPOS Retail" (Store One,
+   0%) and franchisee "Northern Franchise Ltd" (Store Two, 5%) with a seeded franchisee manager
+   (franchisee@fluentpos.com, Manager role).
+2. ✅ Reporting module (`Modules/Reporting/*`): `OrderRegistered`/`OrderRefunded` integration
+   events (Shared.Core, published as domain events from every checkout/refund path and audit-logged
+   via the existing event log) project into a `DailyStoreSales` read model — one row per store per
+   day with orders/gross/tax/refunds/net and org snapshot. Endpoints under
+   `api/v1/reporting/salesreports/*` scope automatically: store staff → their store (EF filter),
+   franchisee managers → their organization, franchisor → everything. Projection failures log
+   but never break the sale.
+3. ✅ Royalty accrual: computed continuously in the read model (net × org rate, snapshotted at
+   projection time) with a `royalties` endpoint grouped by organization — franchisor sees all
+   orgs, franchisees only themselves.
+4. ✅ Wholesaler adapters (Purchasing): `POST suppliers/{id}/import-pricefile` ingests
+   Booker/Bestway-style CSV (`barcode,cost[,price]`), matches products by barcode via the catalog
+   integration service, and reports updated/unmatched/invalid lines; `GET purchaseorders/{id}/export`
+   emits an order CSV (barcode, product, qty, cost) for the wholesaler.
+5. ⏸ Deferred: outbound webhooks / delivery-platform partner API — needs the transactional outbox
+   first (in-process events today), plus subscription management, signing and retries. Next on the
+   backlog together with hourly/category sales dimensions and margin (requires cost snapshots on
+   order lines).
+
+   Verified end-to-end on a fresh database: sales in both stores + a refund projected into
+   `DailyStoreSales` (Northern Franchise: 2 orders, £480 gross, £240 refunded → £240 net → £12
+   royalty at 5%); admin sees both stores, the franchisee manager sees only their organization
+   (daily + royalties), store staff see only their store's row; price-file import updated a
+   product to cost £142.50/price £199 by barcode while flagging the header and an unknown barcode;
+   PO export produced the wholesaler CSV. 33 unit tests green (new `DailyStoreSalesShould` suite).
 
 ---
 
