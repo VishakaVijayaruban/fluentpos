@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SalesDbContext))]
-    [Migration("20260805160739_Initial")]
+    [Migration("20260805172002_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -26,11 +26,45 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FluentPOS.Modules.Sales.Core.Entities.CashMovement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TillSessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TillSessionId");
+
+                    b.ToTable("CashMovements", "Sales");
+                });
+
             modelBuilder.Entity("FluentPOS.Modules.Sales.Core.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("AgeVerificationCompleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("CustomerEmail")
                         .HasColumnType("text");
@@ -50,11 +84,20 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsRefunded")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Note")
                         .HasColumnType("text");
 
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("text");
+
+                    b.Property<string>("RefundReason")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefundedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("StoreId")
                         .HasColumnType("uuid");
@@ -64,6 +107,9 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
 
                     b.Property<decimal>("Tax")
                         .HasColumnType("numeric");
+
+                    b.Property<Guid?>("TillSessionId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
@@ -116,6 +162,55 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
                     b.ToTable("Products", "Sales");
                 });
 
+            modelBuilder.Entity("FluentPOS.Modules.Sales.Core.Entities.TillSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ClosedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("CountedCash")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ExpectedCash")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OpenedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OpenedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("OpeningFloat")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TerminalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("Variance")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TerminalId", "Status");
+
+                    b.ToTable("TillSessions", "Sales");
+                });
+
             modelBuilder.Entity("FluentPOS.Modules.Sales.Core.Entities.Transaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -139,6 +234,9 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence.Migrations
 
                     b.Property<decimal>("TenderedAmount")
                         .HasColumnType("numeric");
+
+                    b.Property<Guid?>("TillSessionId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");

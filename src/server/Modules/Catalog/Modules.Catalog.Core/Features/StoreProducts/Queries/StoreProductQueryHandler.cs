@@ -39,7 +39,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.StoreProducts.Queries
 
             var storeProducts = await queryable
                 .OrderBy(sp => sp.Product.Name)
-                .Select(sp => new GetStoreProductsResponse(sp.Id, sp.StoreId, sp.ProductId, sp.Product.Name, sp.Price, sp.IsRanged, sp.ReorderPoint, sp.ReorderQuantity))
+                .Select(sp => new GetStoreProductsResponse(sp.Id, sp.StoreId, sp.ProductId, sp.Product.Name, sp.Price, sp.IsRanged, sp.ReorderPoint, sp.ReorderQuantity, sp.PreferredSupplierId))
                 .ToListAsync(cancellationToken);
 
             return await Result<List<GetStoreProductsResponse>>.SuccessAsync(storeProducts);

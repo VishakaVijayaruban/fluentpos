@@ -40,6 +40,18 @@ namespace FluentPOS.Modules.Sales.Core.Entities
 
         public bool IsPaid { get; private set; }
 
+        // The till session this sale was rung through (null for non-till sales, e.g. legacy clients).
+        public Guid? TillSessionId { get; set; }
+
+        // Challenge 25: set when the cashier confirmed age for a restricted basket.
+        public bool AgeVerificationCompleted { get; private set; }
+
+        public bool IsRefunded { get; private set; }
+
+        public DateTime? RefundedOn { get; private set; }
+
+        public string RefundReason { get; private set; }
+
         public string Note { get; private set; }
 
         public virtual ICollection<Product> Products { get; private set; } = new List<Product>();
@@ -53,6 +65,23 @@ namespace FluentPOS.Modules.Sales.Core.Entities
         public void MarkAsPaid()
         {
             IsPaid = true;
+        }
+
+        public void RecordAgeVerification()
+        {
+            AgeVerificationCompleted = true;
+        }
+
+        public void MarkAsRefunded(string reason)
+        {
+            if (IsRefunded)
+            {
+                throw new InvalidOperationException("Order has already been refunded.");
+            }
+
+            IsRefunded = true;
+            RefundedOn = DateTime.UtcNow;
+            RefundReason = reason;
         }
 
         public void AddCustomer(GetCustomerByIdResponse customer)

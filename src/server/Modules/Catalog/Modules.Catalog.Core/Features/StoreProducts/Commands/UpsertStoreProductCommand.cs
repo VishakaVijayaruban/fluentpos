@@ -25,5 +25,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.StoreProducts.Commands
         public decimal? ReorderPoint { get; set; }
 
         public decimal? ReorderQuantity { get; set; }
+
+        public Guid? PreferredSupplierId { get; set; }
     }
 }

@@ -9,7 +9,7 @@
 using System.Net;
 using FluentPOS.Shared.Core.Exceptions;
 
-namespace FluentPOS.Modules.Catalog.Core.Exceptions
+namespace FluentPOS.Modules.Sales.Core.Exceptions
 {
     public class SalesException : CustomException
     {

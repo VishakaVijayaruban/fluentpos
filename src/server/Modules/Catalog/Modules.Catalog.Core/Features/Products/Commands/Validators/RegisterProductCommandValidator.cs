@@ -38,6 +38,9 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands.Validators
             RuleFor(c => c.Barcode)
                 .Length(3, 32).WithMessage(localizer["The {PropertyName} property must have between 3 and 32 characters."])
                 .When(c => !string.IsNullOrWhiteSpace(c.Barcode));
+            RuleFor(c => c.MinimumAge)
+                .InclusiveBetween(16, 25).WithMessage(localizer["The {PropertyName} property must be between 16 and 25."])
+                .When(c => c.IsAgeRestricted);
         }
     }
 }

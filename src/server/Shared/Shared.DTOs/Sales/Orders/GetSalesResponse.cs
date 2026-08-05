@@ -9,5 +9,7 @@ namespace FluentPOS.Shared.DTOs.Sales.Orders
                                 string CustomerEmail, decimal SubTotal, decimal Tax, decimal Discount, decimal Total, bool IsPaid, string Note)
     {
         public Guid StoreId { get; set; }
+
+        public bool IsRefunded { get; set; }
     }
 }

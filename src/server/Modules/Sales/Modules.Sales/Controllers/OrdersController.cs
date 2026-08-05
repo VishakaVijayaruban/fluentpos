@@ -45,6 +45,15 @@ namespace FluentPOS.Modules.Sales.Controllers
             return Ok(await Mediator.Send(command));
         }
 
+        [HttpPost("{id}/refund")]
+        [Authorize(Policy = Permissions.Sales.Refund)]
+        public async Task<IActionResult> RefundAsync(Guid id, [FromBody] RefundSaleCommand command)
+        {
+            command ??= new RefundSaleCommand();
+            command.OrderId = id;
+            return Ok(await Mediator.Send(command));
+        }
+
 
     }
 }

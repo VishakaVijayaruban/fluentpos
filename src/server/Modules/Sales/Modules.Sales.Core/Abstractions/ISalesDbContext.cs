@@ -19,5 +19,9 @@ namespace FluentPOS.Modules.Sales.Core.Abstractions
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<TillSession> TillSessions { get; set; }
+
+        public DbSet<CashMovement> CashMovements { get; set; }
     }
 }

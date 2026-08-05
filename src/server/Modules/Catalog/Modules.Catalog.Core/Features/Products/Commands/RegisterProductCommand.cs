@@ -35,6 +35,10 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
 
         public string BarcodeSymbology { get; set; }
 
+        public bool IsAgeRestricted { get; set; }
+
+        public int MinimumAge { get; set; } = 18;
+
         public string Detail { get; set; }
 
         public UploadRequest UploadRequest { get; set; }

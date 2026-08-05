@@ -70,6 +70,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.StoreProducts.Commands
             storeProduct.IsRanged = command.IsRanged;
             storeProduct.ReorderPoint = command.ReorderPoint;
             storeProduct.ReorderQuantity = command.ReorderQuantity;
+            storeProduct.PreferredSupplierId = command.PreferredSupplierId;
 
             await _context.SaveChangesAsync(cancellationToken);
             return await Result<Guid>.SuccessAsync(storeProduct.Id, _localizer["Store Product Saved"]);

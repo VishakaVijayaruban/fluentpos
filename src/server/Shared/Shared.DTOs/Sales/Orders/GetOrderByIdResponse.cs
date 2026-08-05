@@ -24,6 +24,16 @@ namespace FluentPOS.Shared.DTOs.Sales.Orders
        )
        {
               public Guid StoreId { get; set; }
+
+              public Guid? TillSessionId { get; set; }
+
+              public bool AgeVerificationCompleted { get; set; }
+
+              public bool IsRefunded { get; set; }
+
+              public DateTime? RefundedOn { get; set; }
+
+              public string RefundReason { get; set; }
        }
 
 }

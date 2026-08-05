@@ -250,8 +250,14 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsAgeRestricted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LocaleName")
                         .HasColumnType("text");
+
+                    b.Property<int>("MinimumAge")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -284,6 +290,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("IsRanged")
                         .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PreferredSupplierId")
+                        .HasColumnType("uuid");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");

@@ -183,6 +183,47 @@ namespace FluentPOS.Shared.Core.Constants
             public const string Remove = "Permissions.StoreProducts.Remove";
         }
 
+        [DisplayName("Suppliers")]
+        [Description("Suppliers Permissions")]
+        public static class Suppliers
+        {
+            public const string View = "Permissions.Suppliers.View";
+            public const string ViewAll = "Permissions.Suppliers.ViewAll";
+            public const string Register = "Permissions.Suppliers.Register";
+            public const string Update = "Permissions.Suppliers.Update";
+            public const string Remove = "Permissions.Suppliers.Remove";
+        }
+
+        [DisplayName("PurchaseOrders")]
+        [Description("Purchase Orders Permissions")]
+        public static class PurchaseOrders
+        {
+            public const string View = "Permissions.PurchaseOrders.View";
+            public const string ViewAll = "Permissions.PurchaseOrders.ViewAll";
+            public const string Register = "Permissions.PurchaseOrders.Register";
+            public const string Update = "Permissions.PurchaseOrders.Update";
+            public const string Receive = "Permissions.PurchaseOrders.Receive";
+            public const string Remove = "Permissions.PurchaseOrders.Remove";
+        }
+
+        [DisplayName("Replenishment")]
+        [Description("Replenishment Permissions")]
+        public static class Replenishment
+        {
+            public const string Run = "Permissions.Replenishment.Run";
+        }
+
+        [DisplayName("TillSessions")]
+        [Description("Till Sessions Permissions")]
+        public static class TillSessions
+        {
+            public const string View = "Permissions.TillSessions.View";
+            public const string ViewAll = "Permissions.TillSessions.ViewAll";
+            public const string Open = "Permissions.TillSessions.Open";
+            public const string Close = "Permissions.TillSessions.Close";
+            public const string RecordCashMovement = "Permissions.TillSessions.RecordCashMovement";
+        }
+
         [DisplayName("Products Extended Attributes")]
         [Description("Products Extended Attributes Permissions")]
         public static class ProductsExtendedAttributes
@@ -254,6 +295,7 @@ namespace FluentPOS.Shared.Core.Constants
             public const string Register = "Permissions.Sales.Register";
             public const string Update = "Permissions.Sales.Update";
             public const string Remove = "Permissions.Sales.Remove";
+            public const string Refund = "Permissions.Sales.Refund";
         }
     }
 }

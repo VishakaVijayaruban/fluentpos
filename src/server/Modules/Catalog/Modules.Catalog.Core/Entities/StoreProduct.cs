@@ -33,5 +33,8 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
         public decimal? ReorderPoint { get; set; }
 
         public decimal? ReorderQuantity { get; set; }
+
+        // Supplier the replenishment job orders from (Purchasing module id, no cross-schema FK).
+        public Guid? PreferredSupplierId { get; set; }
     }
 }

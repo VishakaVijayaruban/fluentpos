@@ -10,5 +10,5 @@ using System;
 
 namespace FluentPOS.Shared.DTOs.Catalogs.StoreProducts
 {
-    public record GetStoreProductsResponse(Guid Id, Guid StoreId, Guid ProductId, string ProductName, decimal? Price, bool IsRanged, decimal? ReorderPoint, decimal? ReorderQuantity);
+    public record GetStoreProductsResponse(Guid Id, Guid StoreId, Guid ProductId, string ProductName, decimal? Price, bool IsRanged, decimal? ReorderPoint, decimal? ReorderQuantity, Guid? PreferredSupplierId);
 }

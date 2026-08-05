@@ -21,6 +21,12 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
 
         public decimal TenderedAmount { get; set; }
 
+        // Till session the sale is rung through (enables cash reconciliation).
+        public Guid? TillSessionId { get; set; }
+
+        // Challenge 25: cashier confirmed the customer's age for restricted items.
+        public bool AgeVerified { get; set; }
+
         public string Note { get; set; }
     }
 }

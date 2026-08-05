@@ -43,6 +43,11 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
 
         public string BarcodeSymbology { get; set; }
 
+        // Challenge 25: selling this product requires an age check at the till.
+        public bool IsAgeRestricted { get; set; }
+
+        public int MinimumAge { get; set; } = 18;
+
         public string Detail { get; set; }
 
         public virtual ICollection<ProductExtendedAttribute> ExtendedAttributes { get; set; }

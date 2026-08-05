@@ -242,16 +242,38 @@ Prepares the ground; no functional change visible to users.
    solely on `StoreProduct`, and checkout computes line tax as `price × qty × rate%`. A new
    environment bootstraps from empty: run the API once and it migrates + seeds everything.
 
-### Phase 2 — Retail operations (make it a real EPOS)
-1. **Purchasing module** (new, follows module pattern): Supplier, PurchaseOrder + lines,
-   GoodsReceipt; receiving increments stock via the existing `IStockService` path.
-2. **Auto-replenishment:** Hangfire job scanning per-store stock vs. `StoreProduct.ReorderPoint`,
-   generating **draft** POs grouped by preferred supplier (your "gin below 6 bottles" scenario).
-3. **Till sessions:** open/close register, cash float, payout/pickup, X/Z reports, reconciliation.
-4. Receipts (numbered per terminal), refunds/voids with reason codes, basic promotions
-   (multibuy/percent-off) if needed for launch.
-5. **Challenge 25:** age-restricted flag drives a mandatory verification prompt + audit record at
-   the till (licensing inspections ask for this).
+### Phase 2 — Retail operations (make it a real EPOS) — ✅ DONE (2026-08-05)
+1. ✅ **Purchasing module** (`Modules/Purchasing/*`): Supplier CRUD; PurchaseOrder with lines and a
+   Draft → Submitted → Received/Cancelled state machine; receiving books goods into per-store
+   stock via `IStockService` (new shared `StockTransactionKind`: Sale/Purchase/Return); seeded
+   sample supplier; APIs under `api/v1/purchasing/*`.
+2. ✅ **Auto-replenishment:** hourly Hangfire recurring job + on-demand
+   `POST purchasing/replenishment/run`; scans ranged `StoreProduct` rows with a reorder point
+   (`IStoreProductService`), compares live per-store stock, creates **draft** POs grouped by
+   store + preferred supplier (`StoreProduct.PreferredSupplierId`), and skips products already on
+   open POs (idempotent).
+3. ✅ **Till sessions** (Sales module): open per terminal (one open session per till) with a cash
+   float; pay-in/pay-out cash movements with reasons; sales and refunds stamp
+   `TillSessionId` on payment transactions; live X-report figures on session detail; close
+   computes expected cash (float + cash takings ± movements), records counted cash and
+   **variance** (the Z report).
+4. ✅ **Refunds:** full-order refund with mandatory reason; reverses the payment (negative
+   transaction, original payment type) and returns goods to stock as `Return` movements.
+   Deferred: per-terminal receipt numbering, partial refunds, promotions.
+5. ✅ **Challenge 25:** `Product.IsAgeRestricted` + `MinimumAge`; checkout rejects restricted
+   baskets without `ageVerified`; verification is recorded on the order
+   (`AgeVerificationCompleted`) for licensing audits.
+6. ✅ Phase 1 carry-over fixed: cached `GetById` responses are now partitioned by the caller's
+   store (`CachingBehavior` appends the tenant store to cache keys).
+
+   Verified end-to-end on a fresh database: reorder point 5/qty 24 → replenishment created one
+   draft PO (24 × cost £150 = £3,600) under the preferred supplier, rerun added nothing; submit +
+   receive raised stock to 24; Challenge 25 blocked an unverified sale and recorded verification
+   on the verified one; refund reversed £480 cash and returned stock (ledger: +24 purchase, −2
+   sale, +2 return); till session reconciled float £50 + cash £480 − refund £480 − payout £20 =
+   expected £30 vs counted £25 → variance −£5. Old client note: the Angular admin/POS has no UI
+   yet for suppliers, POs, till sessions, refunds, or the age-restricted product flag — API-only
+   until the Phase 3 client work.
 
 ### Phase 3 — Store node resilience (offline-first client)
 1. New POS front end (the Angular 12 app is EOL — POS screen is a rewrite regardless; keep the

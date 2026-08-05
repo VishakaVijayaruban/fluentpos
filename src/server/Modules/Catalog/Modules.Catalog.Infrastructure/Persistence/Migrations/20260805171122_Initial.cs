@@ -138,6 +138,8 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     VatRateId = table.Column<Guid>(type: "uuid", nullable: false),
                     Barcode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
                     BarcodeSymbology = table.Column<string>(type: "text", nullable: true),
+                    IsAgeRestricted = table.Column<bool>(type: "boolean", nullable: false),
+                    MinimumAge = table.Column<int>(type: "integer", nullable: false),
                     Detail = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -209,7 +211,8 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     Price = table.Column<decimal>(type: "numeric", nullable: true),
                     IsRanged = table.Column<bool>(type: "boolean", nullable: false),
                     ReorderPoint = table.Column<decimal>(type: "numeric", nullable: true),
-                    ReorderQuantity = table.Column<decimal>(type: "numeric", nullable: true)
+                    ReorderQuantity = table.Column<decimal>(type: "numeric", nullable: true),
+                    PreferredSupplierId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {

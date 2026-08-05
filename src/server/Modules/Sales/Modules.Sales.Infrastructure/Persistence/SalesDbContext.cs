@@ -45,9 +45,25 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence
 
         public DbSet<Transaction> Transactions { get; set; }
 
+        public DbSet<TillSession> TillSessions { get; set; }
+
+        public DbSet<CashMovement> CashMovements { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TillSession>(entity =>
+            {
+                entity.ToTable("TillSessions");
+                entity.HasIndex(ts => new { ts.TerminalId, ts.Status });
+            });
+
+            modelBuilder.Entity<CashMovement>(entity =>
+            {
+                entity.ToTable("CashMovements");
+                entity.HasIndex(cm => cm.TillSessionId);
+            });
         }
     }
 }

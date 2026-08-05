@@ -84,5 +84,44 @@ namespace FluentPOS.Modules.Sales.Core.Tests.Entities.Tests
             // Assert
             Assert.Equal("ORD-0001", order.ReferenceNumber);
         }
+
+        [Fact]
+        public void Marks_order_as_refunded_with_reason()
+        {
+            // Arrange
+            var order = Order.InitializeOrder();
+
+            // Act
+            order.MarkAsRefunded("Damaged goods");
+
+            // Assert
+            Assert.True(order.IsRefunded);
+            Assert.Equal("Damaged goods", order.RefundReason);
+            Assert.NotNull(order.RefundedOn);
+        }
+
+        [Fact]
+        public void Throws_when_refunded_twice()
+        {
+            // Arrange
+            var order = Order.InitializeOrder();
+            order.MarkAsRefunded("First refund");
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => order.MarkAsRefunded("Second refund"));
+        }
+
+        [Fact]
+        public void Records_age_verification()
+        {
+            // Arrange
+            var order = Order.InitializeOrder();
+
+            // Act
+            order.RecordAgeVerification();
+
+            // Assert
+            Assert.True(order.AgeVerificationCompleted);
+        }
     }
 }

@@ -31,6 +31,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IStoreProductService, StoreProductService>();
             return services;
         }
 

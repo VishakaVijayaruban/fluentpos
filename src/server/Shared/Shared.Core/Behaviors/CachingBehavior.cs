@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentPOS.Shared.Core.Exceptions;
 using FluentPOS.Shared.Core.Interfaces.Serialization;
+using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Queries;
 using FluentPOS.Shared.Core.Settings;
 using MediatR;
@@ -36,14 +37,16 @@ namespace FluentPOS.Shared.Core.Behaviors
         private readonly IStringLocalizer<CachingBehavior> _localizer;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly CacheSettings _settings;
+        private readonly ITenantContext _tenant;
 
-        public CachingBehavior(IDistributedCache cache, ILogger<TResponse> logger, IOptions<CacheSettings> settings, IStringLocalizer<CachingBehavior> localizer, IJsonSerializer jsonSerializer)
+        public CachingBehavior(IDistributedCache cache, ILogger<TResponse> logger, IOptions<CacheSettings> settings, IStringLocalizer<CachingBehavior> localizer, IJsonSerializer jsonSerializer, ITenantContext tenant)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _localizer = localizer;
             _jsonSerializer = jsonSerializer;
             _settings = settings.Value;
+            _tenant = tenant;
         }
 
 #pragma warning disable RCS1046 // Asynchronous method name should end with 'Async'.
@@ -57,6 +60,13 @@ namespace FluentPOS.Shared.Core.Behaviors
                 return await next();
             }
 
+            // Store-scoped users get store-partitioned cache entries so an entry cached for one
+            // store can never be served to a user restricted to another. Unscoped (HQ) requests
+            // keep the plain key, which is also the key handlers invalidate on writes.
+            string cacheKey = _tenant?.StoreId is { } storeId
+                ? $"{request.CacheKey}:store-{storeId}"
+                : request.CacheKey;
+
             async Task<TResponse> GetResponseAndAddToCache()
             {
                 response = await next();
@@ -68,20 +78,20 @@ namespace FluentPOS.Shared.Core.Behaviors
 
                 var options = new DistributedCacheEntryOptions { SlidingExpiration = slidingExpiration };
                 byte[] serializedData = Encoding.Default.GetBytes(_jsonSerializer.Serialize(response));
-                await _cache.SetAsync(request.CacheKey, serializedData, options, cancellationToken);
+                await _cache.SetAsync(cacheKey, serializedData, options, cancellationToken);
                 return response;
             }
 
-            byte[] cachedResponse = !string.IsNullOrWhiteSpace(request.CacheKey) ? await _cache.GetAsync(request.CacheKey, cancellationToken) : null;
+            byte[] cachedResponse = !string.IsNullOrWhiteSpace(cacheKey) ? await _cache.GetAsync(cacheKey, cancellationToken) : null;
             if (cachedResponse != null)
             {
                 response = _jsonSerializer.Deserialize<TResponse>(Encoding.Default.GetString(cachedResponse));
-                _logger.LogInformation(string.Format(_localizer["Fetched from Cache -> '{0}'."], request.CacheKey));
+                _logger.LogInformation(string.Format(_localizer["Fetched from Cache -> '{0}'."], cacheKey));
             }
             else
             {
                 response = await GetResponseAndAddToCache();
-                _logger.LogInformation(string.Format(_localizer["Added to Cache -> '{0}'."], request.CacheKey));
+                _logger.LogInformation(string.Format(_localizer["Added to Cache -> '{0}'."], cacheKey));
             }
 
             return response;
