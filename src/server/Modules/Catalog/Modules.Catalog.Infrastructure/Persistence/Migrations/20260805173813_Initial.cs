@@ -50,6 +50,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LastModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Rate = table.Column<decimal>(type: "numeric", nullable: false)
                 },
@@ -128,6 +129,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LastModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     LocaleName = table.Column<string>(type: "text", nullable: true),
                     BrandId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -206,6 +208,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LastModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StoreId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: true),

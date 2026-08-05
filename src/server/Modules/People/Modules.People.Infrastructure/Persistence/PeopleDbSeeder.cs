@@ -43,12 +43,28 @@ namespace FluentPOS.Modules.People.Infrastructure.Persistence
         {
             try
             {
+                AddWalkInCustomer();
                 AddCustomers();
                 _db.SaveChanges();
             }
             catch (Exception)
             {
                 _logger.LogError(_localizer["An error occurred while seeding People data."]);
+            }
+        }
+
+        private void AddWalkInCustomer()
+        {
+            if (!_db.Customers.Any(c => c.Id == FluentPOS.Shared.Core.Constants.OrganizationConstants.WalkInCustomerId))
+            {
+                _db.Customers.Add(new Customer
+                {
+                    Id = FluentPOS.Shared.Core.Constants.OrganizationConstants.WalkInCustomerId,
+                    Name = "Walk-in Customer",
+                    Type = "General"
+                });
+                _db.SaveChanges();
+                _logger.LogInformation(_localizer["Seeded Walk-in Customer."]);
             }
         }
 

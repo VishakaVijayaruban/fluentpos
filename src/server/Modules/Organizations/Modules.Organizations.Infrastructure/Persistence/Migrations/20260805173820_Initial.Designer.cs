@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(OrganizationDbContext))]
-    [Migration("20260805160726_Initial")]
+    [Migration("20260805173820_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -89,6 +89,9 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("DeviceKeyHash")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");

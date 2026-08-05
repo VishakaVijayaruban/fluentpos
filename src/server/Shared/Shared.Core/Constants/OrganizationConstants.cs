@@ -20,5 +20,8 @@ namespace FluentPOS.Shared.Core.Constants
         public static readonly Guid DefaultStoreId = Guid.Parse("51000000-0000-4000-8000-000000000001");
 
         public static readonly Guid SecondStoreId = Guid.Parse("51000000-0000-4000-8000-000000000002");
+
+        // Anonymous counter sales at the till are attributed to this customer.
+        public static readonly Guid WalkInCustomerId = Guid.Parse("c0000000-0000-4000-8000-000000000001");
     }
 }

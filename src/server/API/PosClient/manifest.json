@@ -1,0 +1,10 @@
+{
+  "name": "FluentPOS Till",
+  "short_name": "FluentPOS",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f4f3",
+  "theme_color": "#1a7f5a",
+  "icons": []
+}

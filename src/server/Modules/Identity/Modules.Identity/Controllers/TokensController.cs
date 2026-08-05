@@ -19,10 +19,12 @@ namespace FluentPOS.Modules.Identity.Controllers
     internal sealed class TokensController : BaseController
     {
         private readonly ITokenService _tokenService;
+        private readonly FluentPOS.Shared.Core.Interfaces.Services.Identity.ICurrentUser _currentUser;
 
-        public TokensController(ITokenService tokenService)
+        public TokensController(ITokenService tokenService, FluentPOS.Shared.Core.Interfaces.Services.Identity.ICurrentUser currentUser)
         {
             _tokenService = tokenService;
+            _currentUser = currentUser;
         }
 
         [HttpPost]
@@ -39,6 +41,24 @@ namespace FluentPOS.Modules.Identity.Controllers
         {
             var response = await _tokenService.RefreshTokenAsync(request, GenerateIPAddress());
             return Ok(response);
+        }
+
+        // Operator PIN sign-in at a registered till; the token is scoped to the till's store.
+        [HttpPost("pin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPosTokenAsync(PosTokenRequest request)
+        {
+            var token = await _tokenService.GetPosTokenAsync(request, GenerateIPAddress());
+            return Ok(token);
+        }
+
+        // Sets the calling user's own POS PIN.
+        [HttpPost("pin/setup")]
+        [Authorize]
+        public async Task<IActionResult> SetPosPinAsync(SetPosPinRequest request)
+        {
+            var result = await _tokenService.SetPosPinAsync(_currentUser.GetUserId().ToString(), request?.Pin);
+            return Ok(result);
         }
 
         // ReSharper disable once InconsistentNaming

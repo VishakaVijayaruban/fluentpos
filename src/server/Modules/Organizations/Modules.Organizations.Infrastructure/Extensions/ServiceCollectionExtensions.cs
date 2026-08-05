@@ -28,6 +28,7 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Extensions
             services.AddTransient<IDatabaseSeeder, OrganizationDbSeeder>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddTransient<IStoreService, StoreService>();
+            services.AddTransient<ITerminalService, TerminalService>();
             return services;
         }
     }

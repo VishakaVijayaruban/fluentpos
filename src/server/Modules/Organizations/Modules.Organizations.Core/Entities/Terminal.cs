@@ -19,6 +19,9 @@ namespace FluentPOS.Modules.Organizations.Core.Entities
 
         public string Name { get; set; }
 
+        // SHA-256 hash of the long-lived device key issued at registration (null = unregistered).
+        public string DeviceKeyHash { get; set; }
+
         public bool IsActive { get; set; } = true;
     }
 }

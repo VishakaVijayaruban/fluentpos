@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20260805171122_Initial")]
+    [Migration("20260805173813_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -256,6 +256,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsAgeRestricted")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("LocaleName")
                         .HasColumnType("text");
 
@@ -294,6 +297,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsRanged")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("PreferredSupplierId")
                         .HasColumnType("uuid");
 
@@ -327,6 +333,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()

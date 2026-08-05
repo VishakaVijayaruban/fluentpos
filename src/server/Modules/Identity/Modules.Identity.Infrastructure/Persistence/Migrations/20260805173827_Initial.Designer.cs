@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FluentPOS.Modules.Identity.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20260805160721_Initial")]
+    [Migration("20260805173827_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -250,6 +250,9 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("PosPinHash")
+                        .HasColumnType("text");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");

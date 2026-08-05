@@ -19,6 +19,7 @@ using FluentPOS.Modules.Identity.Core.Entities;
 using FluentPOS.Modules.Identity.Core.Exceptions;
 using FluentPOS.Modules.Identity.Core.Settings;
 using FluentPOS.Shared.Core.Constants;
+using FluentPOS.Shared.Core.IntegrationServices.Organization;
 using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Interfaces.Services.Identity;
 using FluentPOS.Shared.Core.Settings;
@@ -40,6 +41,8 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
         private readonly MailSettings _mailSettings;
         private readonly JwtSettings _config;
         private readonly IEventLogService _eventLog;
+        private readonly ITerminalService _terminalService;
+        private readonly IPasswordHasher<FluentUser> _pinHasher;
 
         public TokenService(
             UserManager<FluentUser> userManager,
@@ -48,7 +51,9 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
             IStringLocalizer<TokenService> localizer,
             IOptions<SmsSettings> smsSettings,
             IOptions<MailSettings> mailSettings,
-            IEventLogService eventLog)
+            IEventLogService eventLog,
+            ITerminalService terminalService,
+            IPasswordHasher<FluentUser> pinHasher)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -57,6 +62,8 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
             _mailSettings = mailSettings.Value;
             _config = config.Value;
             _eventLog = eventLog;
+            _terminalService = terminalService;
+            _pinHasher = pinHasher;
         }
 
         public async Task<IResult<TokenResponse>> GetTokenAsync(TokenRequest request, string ipAddress)
@@ -125,12 +132,68 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
             return await Result<TokenResponse>.SuccessAsync(response);
         }
 
+        public async Task<IResult<TokenResponse>> GetPosTokenAsync(PosTokenRequest request, string ipAddress)
+        {
+            // The device key proves the request comes from a registered till.
+            Guid? terminalStoreId = await _terminalService.ValidateDeviceKeyAsync(request.TerminalId, request.DeviceKey);
+            if (terminalStoreId == null)
+            {
+                throw new IdentityException(_localizer["Invalid terminal or device key."], statusCode: HttpStatusCode.Unauthorized);
+            }
+
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null || !user.IsActive)
+            {
+                throw new IdentityException(_localizer["Invalid Credentials."], statusCode: HttpStatusCode.Unauthorized);
+            }
+
+            if (string.IsNullOrEmpty(user.PosPinHash)
+                || _pinHasher.VerifyHashedPassword(user, user.PosPinHash, request.Pin) == PasswordVerificationResult.Failed)
+            {
+                throw new IdentityException(_localizer["Invalid Credentials."], statusCode: HttpStatusCode.Unauthorized);
+            }
+
+            // Store-scoped operators may only sign in at their own store's tills.
+            if (user.StoreId.HasValue && user.StoreId.Value != terminalStoreId.Value)
+            {
+                throw new IdentityException(_localizer["You cannot sign in at a till belonging to another store."], statusCode: HttpStatusCode.Unauthorized);
+            }
+
+            user.RefreshToken = GenerateRefreshToken();
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_config.RefreshTokenExpirationInDays);
+            await _userManager.UpdateAsync(user);
+
+            // POS tokens are always scoped to the terminal's store - even for head-office users.
+            string token = GenerateEncryptedToken(GetSigningCredentials(), await GetClaimsAsync(user, ipAddress, terminalStoreId));
+            var response = new TokenResponse(token, user.RefreshToken, user.RefreshTokenExpiryTime);
+            await _eventLog.LogCustomEventAsync(new() { Description = $"POS sign-in for {user.Email} at terminal {request.TerminalId}.", Email = user.Email });
+            return await Result<TokenResponse>.SuccessAsync(response);
+        }
+
+        public async Task<IResult<string>> SetPosPinAsync(string userId, string pin)
+        {
+            if (string.IsNullOrWhiteSpace(pin) || pin.Length < 4 || pin.Length > 8 || !pin.All(char.IsDigit))
+            {
+                throw new IdentityException(_localizer["The PIN must be 4 to 8 digits."], statusCode: HttpStatusCode.BadRequest);
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new IdentityException(_localizer["User Not Found."], statusCode: HttpStatusCode.NotFound);
+            }
+
+            user.PosPinHash = _pinHasher.HashPassword(user, pin);
+            await _userManager.UpdateAsync(user);
+            return await Result<string>.SuccessAsync(_localizer["POS PIN updated."].ToString());
+        }
+
         private async Task<string> GenerateJwtAsync(FluentUser user, string ipAddress)
         {
             return GenerateEncryptedToken(GetSigningCredentials(), await GetClaimsAsync(user, ipAddress));
         }
 
-        private async Task<IEnumerable<Claim>> GetClaimsAsync(FluentUser user, string ipAddress)
+        private async Task<IEnumerable<Claim>> GetClaimsAsync(FluentUser user, string ipAddress, Guid? storeOverride = null)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -154,9 +217,10 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
                 new("ipAddress", ipAddress)
             };
 
-            if (user.StoreId.HasValue)
+            Guid? storeClaim = storeOverride ?? user.StoreId;
+            if (storeClaim.HasValue)
             {
-                claims.Add(new Claim(ApplicationClaimTypes.Store, user.StoreId.Value.ToString()));
+                claims.Add(new Claim(ApplicationClaimTypes.Store, storeClaim.Value.ToString()));
             }
 
             return claims

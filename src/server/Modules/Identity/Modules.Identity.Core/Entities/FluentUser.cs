@@ -34,6 +34,9 @@ namespace FluentPOS.Modules.Identity.Core.Entities
         // The store this user is restricted to. Null = head office (all stores).
         public Guid? StoreId { get; set; }
 
+        // Hashed short PIN for operator sign-in at registered tills.
+        public string PosPinHash { get; set; }
+
         public virtual ICollection<UserExtendedAttribute> ExtendedAttributes { get; set; }
 
         private List<Event> _domainEvents;

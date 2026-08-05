@@ -248,6 +248,9 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PosPinHash")
+                        .HasColumnType("text");
+
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");
 

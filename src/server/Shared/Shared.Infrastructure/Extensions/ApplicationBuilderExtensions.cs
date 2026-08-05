@@ -44,6 +44,23 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Files")),
                 RequestPath = "/files"
             });
+
+            // Offline-first POS client (PWA) hosted by the API during the transition period.
+            string posClientPath = Path.Combine(Directory.GetCurrentDirectory(), "PosClient");
+            if (Directory.Exists(posClientPath))
+            {
+                var posFileProvider = new PhysicalFileProvider(posClientPath);
+                app.UseDefaultFiles(new DefaultFilesOptions
+                {
+                    FileProvider = posFileProvider,
+                    RequestPath = "/pos"
+                });
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = posFileProvider,
+                    RequestPath = "/pos"
+                });
+            }
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();

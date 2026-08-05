@@ -17,5 +17,9 @@ namespace FluentPOS.Shared.Core.Interfaces.Services.Identity
         Task<IResult<TokenResponse>> GetTokenAsync(TokenRequest request, string ipAddress);
 
         Task<IResult<TokenResponse>> RefreshTokenAsync(RefreshTokenRequest request, string ipAddress);
+
+        Task<IResult<TokenResponse>> GetPosTokenAsync(PosTokenRequest request, string ipAddress);
+
+        Task<IResult<string>> SetPosPinAsync(string userId, string pin);
     }
 }

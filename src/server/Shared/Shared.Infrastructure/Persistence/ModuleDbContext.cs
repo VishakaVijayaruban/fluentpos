@@ -109,9 +109,21 @@ namespace FluentPOS.Shared.Infrastructure.Persistence
             }
         }
 
+        private void StampSyncTrackedEntries()
+        {
+            foreach (var entry in ChangeTracker.Entries<ISyncTracked>())
+            {
+                if (entry.State is EntityState.Added or EntityState.Modified)
+                {
+                    entry.Entity.LastModifiedOn = DateTime.UtcNow;
+                }
+            }
+        }
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             StampStoreOnAddedEntries();
+            StampSyncTrackedEntries();
             var changes = OnBeforeSaveChanges();
             return await this.SaveChangeWithPublishEventsAsync(_eventLogger, _mediator, changes, _json, cancellationToken);
         }
@@ -166,6 +178,7 @@ namespace FluentPOS.Shared.Infrastructure.Persistence
         public override int SaveChanges()
         {
             StampStoreOnAddedEntries();
+            StampSyncTrackedEntries();
             var changes = OnBeforeSaveChanges();
             return this.SaveChangeWithPublishEvents(_eventLogger, _mediator, changes, _json);
         }

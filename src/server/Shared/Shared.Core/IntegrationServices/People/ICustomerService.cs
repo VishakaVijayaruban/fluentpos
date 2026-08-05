@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------
-// <copyright file="VatRate.cs" company="FluentPOS">
+// <copyright file="ICustomerService.cs" company="FluentPOS">
 // Copyright (c) FluentPOS. All rights reserved.
 // The core team: Mukesh Murugan (iammukeshm), Chhin Sras (chhinsras), Nikolay Chebotov (unchase).
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -7,18 +7,16 @@
 // --------------------------------------------------------------------------------------------------
 
 using System;
-using FluentPOS.Shared.Core.Contracts;
-using FluentPOS.Shared.Core.Domain;
+using System.Threading.Tasks;
+using FluentPOS.Shared.DTOs.People.Customers;
 
-namespace FluentPOS.Modules.Catalog.Core.Entities
+namespace FluentPOS.Shared.Core.IntegrationServices.People
 {
-    public class VatRate : BaseEntity, ISyncTracked
+    /// <summary>
+    /// Integration Services for the People Module.
+    /// </summary>
+    public interface ICustomerService
     {
-        public DateTime LastModifiedOn { get; set; }
-
-        public string Name { get; set; }
-
-        // Percentage, e.g. 20 for UK standard rate.
-        public decimal Rate { get; set; }
+        Task<GetCustomerByIdResponse> GetDetailsAsync(Guid customerId);
     }
 }

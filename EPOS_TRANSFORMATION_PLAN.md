@@ -275,14 +275,36 @@ Prepares the ground; no functional change visible to users.
    yet for suppliers, POs, till sessions, refunds, or the age-restricted product flag — API-only
    until the Phase 3 client work.
 
-### Phase 3 — Store node resilience (offline-first client)
-1. New POS front end (the Angular 12 app is EOL — POS screen is a rewrite regardless; keep the
-   admin back-office on the old app until it is rewritten or replaced): PWA or lightweight desktop
-   shell, IndexedDB product cache, client-owned cart, durable sale queue.
-2. Sync protocol: idempotent sale submission (client UUIDs), catalog change feed with cursors,
-   clock-skew-tolerant timestamps.
-3. Terminal registration/device auth (long-lived device credential + short-lived operator PIN
-   sign-in — cashiers don't type passwords).
+### Phase 3 — Store node resilience (offline-first client) — ✅ DONE (2026-08-05)
+1. ✅ New offline-first POS client: a dependency-free PWA served by the API at `/pos`
+   (`src/server/API/PosClient/`) — product grid + basket owned by the device, IndexedDB product
+   cache, durable IndexedDB sale outbox with automatic replay (online event + 15s retry), a
+   service worker that keeps the app shell loadable with the server completely down, Challenge 25
+   confirmation for restricted baskets, and per-store effective pricing applied client-side from
+   synced overlays. The Angular 12 admin app remains for back office.
+2. ✅ Sync protocol:
+   - `GET api/v1/catalog/sync?since=<cursor>` returns changed products/store-overlays/VAT rates
+     plus `serverTime`, which the client persists as its next cursor — cursors are pure server
+     clock, so device clock skew is irrelevant. `ISyncTracked.LastModifiedOn` is stamped centrally
+     in `ModuleDbContext` on every insert/update.
+   - `POST api/v1/sales/orders/pos` takes a complete client-owned sale document whose
+     device-generated UUID **is** the order id: replaying a queued sale returns the existing order
+     instead of double-charging. Anonymous sales default to a seeded walk-in customer.
+3. ✅ Terminal device auth: `POST organization/terminals/{id}/register-device` issues a long-lived
+   device key (shown once, SHA-256 hash stored, re-run rotates); `POST identity/tokens/pin` signs
+   an operator in with device key + short numeric PIN (`tokens/pin/setup` sets your own), issuing
+   a JWT always scoped to the terminal's store — head-office users act store-scoped at a till, and
+   store staff cannot sign in at another store's terminal.
+
+   Verified end-to-end: device key + PIN login (wrong PIN and bogus device key both rejected);
+   full sync pull (42 products) then zero-change incremental then exactly-one-change incremental
+   after a price edit; same clientSaleId submitted twice → one order. In the browser: signed in,
+   made an online sale, **killed the API**, reloaded the page (service worker shell + cached
+   catalog, 42 tiles), sold offline → "1 queued", restarted the API → the outbox auto-drained and
+   the offline sale appeared server-side exactly once. Known gaps for later: no catalog tombstones
+   (deleted products linger in device caches until a full resync), the PWA signs in with
+   email/password rather than the PIN flow, and queued sales rejected as permanently invalid are
+   dropped client-side (server-side dead-letter capture would be better).
 
 ### Phase 4 — Chain & franchise layer
 1. Multi-organization: franchisee orgs, franchisor macro views, cross-org consolidated reporting.

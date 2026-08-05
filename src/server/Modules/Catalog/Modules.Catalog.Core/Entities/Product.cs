@@ -9,12 +9,15 @@
 using System;
 using System.Collections.Generic;
 using FluentPOS.Modules.Catalog.Core.Entities.ExtendedAttributes;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 
 namespace FluentPOS.Modules.Catalog.Core.Entities
 {
-    public class Product : BaseEntity
+    public class Product : BaseEntity, ISyncTracked
     {
+        public DateTime LastModifiedOn { get; set; }
+
         public string Name { get; set; }
 
         public string LocaleName { get; set; }

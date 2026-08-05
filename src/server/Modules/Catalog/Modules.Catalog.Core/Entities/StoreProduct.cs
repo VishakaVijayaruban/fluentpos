@@ -16,8 +16,10 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
     /// Per-store overlay on a centrally managed product: price override, ranging, and
     /// replenishment settings. Absence of a row means the store inherits central values.
     /// </summary>
-    public class StoreProduct : BaseEntity, IMustHaveStore
+    public class StoreProduct : BaseEntity, IMustHaveStore, ISyncTracked
     {
+        public DateTime LastModifiedOn { get; set; }
+
         public Guid StoreId { get; set; }
 
         public Guid ProductId { get; set; }

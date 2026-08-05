@@ -45,6 +45,15 @@ namespace FluentPOS.Modules.Sales.Controllers
             return Ok(await Mediator.Send(command));
         }
 
+        // Offline-capable POS checkout: the client owns the basket and supplies the sale id,
+        // so queued sales can be replayed safely.
+        [HttpPost("pos")]
+        [Authorize(Policy = Permissions.Sales.Register)]
+        public async Task<IActionResult> RegisterPosSaleAsync(RegisterPosSaleCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
+
         [HttpPost("{id}/refund")]
         [Authorize(Policy = Permissions.Sales.Refund)]
         public async Task<IActionResult> RefundAsync(Guid id, [FromBody] RefundSaleCommand command)

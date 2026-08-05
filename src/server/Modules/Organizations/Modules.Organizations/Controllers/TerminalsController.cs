@@ -33,5 +33,13 @@ namespace FluentPOS.Modules.Organizations.Controllers
         {
             return Ok(await Mediator.Send(command));
         }
+
+        // Issues (or rotates) the till's long-lived device key; the plaintext is returned once.
+        [HttpPost("{id}/register-device")]
+        [Authorize(Policy = Permissions.Terminals.Register)]
+        public async Task<IActionResult> RegisterDeviceAsync(Guid id)
+        {
+            return Ok(await Mediator.Send(new RegisterTerminalDeviceCommand { TerminalId = id }));
+        }
     }
 }
