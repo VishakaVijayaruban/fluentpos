@@ -13,5 +13,7 @@ namespace FluentPOS.Shared.Core.Constants
         public const string Permission = "Permission";
 
         public const string Store = "storeId";
+
+        public const string Organization = "orgId";
     }
 }

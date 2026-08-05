@@ -10,5 +10,5 @@ using System;
 
 namespace FluentPOS.Shared.DTOs.Organizations
 {
-    public record GetOrganizationsResponse(Guid Id, string Name, string Detail);
+    public record GetOrganizationsResponse(Guid Id, string Name, string Detail, decimal RoyaltyRatePercent);
 }

@@ -29,6 +29,7 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddTransient<IStoreService, StoreService>();
             services.AddTransient<ITerminalService, TerminalService>();
+            services.AddTransient<IOrganizationService, OrganizationService>();
             return services;
         }
     }

@@ -21,7 +21,8 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    Detail = table.Column<string>(type: "text", nullable: true)
+                    Detail = table.Column<string>(type: "text", nullable: true),
+                    RoyaltyRatePercent = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {

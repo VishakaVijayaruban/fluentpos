@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------
-// <copyright file="DesignTimeTenantContext.cs" company="FluentPOS">
+// <copyright file="RegisterOrganizationCommand.cs" company="FluentPOS">
 // Copyright (c) FluentPOS. All rights reserved.
 // The core team: Mukesh Murugan (iammukeshm), Chhin Sras (chhinsras), Nikolay Chebotov (unchase).
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -7,17 +7,20 @@
 // --------------------------------------------------------------------------------------------------
 
 using System;
-using FluentPOS.Shared.Core.Interfaces.Services;
+using FluentPOS.Shared.Core.Wrapper;
+using MediatR;
 
-namespace FluentPOS.Shared.Infrastructure.Persistence
+namespace FluentPOS.Modules.Organizations.Core.Features.Organizations.Commands
 {
     /// <summary>
-    /// Unscoped tenant context for design-time DbContext factories (migrations tooling).
+    /// Onboards a franchisee organization with its royalty agreement.
     /// </summary>
-    public class DesignTimeTenantContext : ITenantContext
+    public class RegisterOrganizationCommand : IRequest<Result<Guid>>
     {
-        public Guid? StoreId => null;
+        public string Name { get; set; }
 
-        public Guid? OrganizationId => null;
+        public string Detail { get; set; }
+
+        public decimal RoyaltyRatePercent { get; set; }
     }
 }

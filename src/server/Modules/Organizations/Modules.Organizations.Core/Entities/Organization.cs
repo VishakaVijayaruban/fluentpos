@@ -17,6 +17,10 @@ namespace FluentPOS.Modules.Organizations.Core.Entities
 
         public string Detail { get; set; }
 
+        // Franchise agreement: percentage of net sales accrued to the franchisor.
+        // Zero for the franchisor's own organization.
+        public decimal RoyaltyRatePercent { get; set; }
+
         public virtual ICollection<Store> Stores { get; set; } = new List<Store>();
     }
 }

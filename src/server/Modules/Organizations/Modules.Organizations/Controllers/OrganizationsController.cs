@@ -7,6 +7,7 @@
 // --------------------------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using FluentPOS.Modules.Organizations.Core.Features.Organizations.Commands;
 using FluentPOS.Modules.Organizations.Core.Features.Organizations.Queries;
 using FluentPOS.Shared.Core.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,14 @@ namespace FluentPOS.Modules.Organizations.Controllers
         public async Task<IActionResult> GetAllAsync()
         {
             return Ok(await Mediator.Send(new GetOrganizationsQuery()));
+        }
+
+        // Onboard a franchisee organization with its royalty agreement.
+        [HttpPost]
+        [Authorize(Policy = Permissions.Organizations.Register)]
+        public async Task<IActionResult> RegisterAsync(RegisterOrganizationCommand command)
+        {
+            return Ok(await Mediator.Send(command));
         }
     }
 }

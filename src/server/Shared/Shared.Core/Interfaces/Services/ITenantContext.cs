@@ -11,11 +11,14 @@ using System;
 namespace FluentPOS.Shared.Core.Interfaces.Services
 {
     /// <summary>
-    /// The store scope of the current request. Null means head-office scope: the caller
-    /// is not restricted to a store and sees data across all stores.
+    /// The tenancy scope of the current request. A store id restricts to one store; an
+    /// organization id restricts to one franchisee's stores; both null means franchisor
+    /// (platform) scope with visibility across everything.
     /// </summary>
     public interface ITenantContext
     {
         Guid? StoreId { get; }
+
+        Guid? OrganizationId { get; }
     }
 }

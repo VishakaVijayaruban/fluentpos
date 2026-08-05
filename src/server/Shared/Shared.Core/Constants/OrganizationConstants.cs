@@ -17,6 +17,9 @@ namespace FluentPOS.Shared.Core.Constants
     {
         public static readonly Guid DefaultOrganizationId = Guid.Parse("7a000000-0000-4000-8000-000000000001");
 
+        // Seeded sample franchisee (owns Store Two, 5% royalty).
+        public static readonly Guid FranchiseeOrganizationId = Guid.Parse("7a000000-0000-4000-8000-000000000002");
+
         public static readonly Guid DefaultStoreId = Guid.Parse("51000000-0000-4000-8000-000000000001");
 
         public static readonly Guid SecondStoreId = Guid.Parse("51000000-0000-4000-8000-000000000002");

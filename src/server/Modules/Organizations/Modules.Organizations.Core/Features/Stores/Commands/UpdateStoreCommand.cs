@@ -26,6 +26,9 @@ namespace FluentPOS.Modules.Organizations.Core.Features.Stores.Commands
 
         public string Phone { get; set; }
 
+        // When set, moves the store to another organization (e.g. sale to a franchisee).
+        public Guid? OrganizationId { get; set; }
+
         public bool IsActive { get; set; } = true;
     }
 }

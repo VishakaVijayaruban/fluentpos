@@ -34,6 +34,9 @@ namespace FluentPOS.Modules.Identity.Core.Entities
         // The store this user is restricted to. Null = head office (all stores).
         public Guid? StoreId { get; set; }
 
+        // The franchisee organization this user belongs to. Null = franchisor (platform-wide).
+        public Guid? OrganizationId { get; set; }
+
         // Hashed short PIN for operator sign-in at registered tills.
         public string PosPinHash { get; set; }
 

@@ -41,12 +41,21 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence
             {
                 if (!_db.Organizations.Any())
                 {
-                    _db.Organizations.Add(new Organization
-                    {
-                        Id = OrganizationConstants.DefaultOrganizationId,
-                        Name = "FluentPOS Retail",
-                        Detail = "Default organization"
-                    });
+                    _db.Organizations.AddRange(
+                        new Organization
+                        {
+                            Id = OrganizationConstants.DefaultOrganizationId,
+                            Name = "FluentPOS Retail",
+                            Detail = "Franchisor (head office)",
+                            RoyaltyRatePercent = 0m
+                        },
+                        new Organization
+                        {
+                            Id = OrganizationConstants.FranchiseeOrganizationId,
+                            Name = "Northern Franchise Ltd",
+                            Detail = "Sample franchisee",
+                            RoyaltyRatePercent = 5m
+                        });
 
                     _db.Stores.AddRange(
                         new Store
@@ -60,7 +69,7 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence
                         new Store
                         {
                             Id = OrganizationConstants.SecondStoreId,
-                            OrganizationId = OrganizationConstants.DefaultOrganizationId,
+                            OrganizationId = OrganizationConstants.FranchiseeOrganizationId,
                             Name = "Store Two",
                             City = "Leeds"
                         });

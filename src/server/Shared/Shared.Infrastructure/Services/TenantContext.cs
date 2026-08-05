@@ -34,5 +34,14 @@ namespace FluentPOS.Shared.Infrastructure.Services
                 return Guid.TryParse(claim, out var storeId) ? storeId : null;
             }
         }
+
+        public Guid? OrganizationId
+        {
+            get
+            {
+                string claim = _accessor.HttpContext?.User?.FindFirst(ApplicationClaimTypes.Organization)?.Value;
+                return Guid.TryParse(claim, out var organizationId) ? organizationId : null;
+            }
+        }
     }
 }

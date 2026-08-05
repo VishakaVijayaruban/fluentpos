@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(OrganizationDbContext))]
-    [Migration("20260805173820_Initial")]
+    [Migration("20260805181301_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,6 +39,9 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
+
+                    b.Property<decimal>("RoyaltyRatePercent")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 

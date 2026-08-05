@@ -37,6 +37,9 @@ namespace FluentPOS.Modules.Organizations.Infrastructure.Persistence.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<decimal>("RoyaltyRatePercent")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.ToTable("Organizations", "Organization");

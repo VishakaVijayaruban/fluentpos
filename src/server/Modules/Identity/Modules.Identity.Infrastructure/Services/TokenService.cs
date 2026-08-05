@@ -223,6 +223,11 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
                 claims.Add(new Claim(ApplicationClaimTypes.Store, storeClaim.Value.ToString()));
             }
 
+            if (user.OrganizationId.HasValue)
+            {
+                claims.Add(new Claim(ApplicationClaimTypes.Organization, user.OrganizationId.Value.ToString()));
+            }
+
             return claims
                 .Union(userClaims)
                 .Union(roleClaims)

@@ -153,6 +153,16 @@ namespace FluentPOS.Shared.Core.Constants
         public static class Organizations
         {
             public const string ViewAll = "Permissions.Organizations.ViewAll";
+            public const string Register = "Permissions.Organizations.Register";
+            public const string Update = "Permissions.Organizations.Update";
+        }
+
+        [DisplayName("Reporting")]
+        [Description("Reporting Permissions")]
+        public static class Reporting
+        {
+            public const string View = "Permissions.Reporting.View";
+            public const string Royalties = "Permissions.Reporting.Royalties";
         }
 
         [DisplayName("Stores")]
@@ -192,6 +202,7 @@ namespace FluentPOS.Shared.Core.Constants
             public const string Register = "Permissions.Suppliers.Register";
             public const string Update = "Permissions.Suppliers.Update";
             public const string Remove = "Permissions.Suppliers.Remove";
+            public const string ImportPrices = "Permissions.Suppliers.ImportPrices";
         }
 
         [DisplayName("PurchaseOrders")]

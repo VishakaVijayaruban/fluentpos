@@ -80,6 +80,17 @@ namespace FluentPOS.Modules.Organizations.Core.Features.Stores.Commands
             store.Postcode = command.Postcode;
             store.Phone = command.Phone;
             store.IsActive = command.IsActive;
+
+            if (command.OrganizationId.HasValue && command.OrganizationId.Value != store.OrganizationId)
+            {
+                if (!await _context.Organizations.AnyAsync(o => o.Id == command.OrganizationId.Value, cancellationToken))
+                {
+                    throw new OrganizationException(_localizer["Organization Not Found!"], HttpStatusCode.NotFound);
+                }
+
+                store.OrganizationId = command.OrganizationId.Value;
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
             return await Result<Guid>.SuccessAsync(store.Id, _localizer["Store Updated"]);
         }

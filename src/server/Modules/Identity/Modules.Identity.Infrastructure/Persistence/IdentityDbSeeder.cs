@@ -50,7 +50,67 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence
             AddSuperAdmin();
             AddStaff();
             AddStaffPermissions();
+            AddFranchiseeManager();
+            AddManagerPermissions();
             _db.SaveChanges();
+        }
+
+        // Sample franchisee manager: org-scoped (all of Northern Franchise's stores), not store-scoped.
+        private void AddFranchiseeManager()
+        {
+            Task.Run(async () =>
+            {
+                var user = new FluentUser
+                {
+                    FirstName = "Farah",
+                    LastName = "North",
+                    Email = "franchisee@fluentpos.com",
+                    UserName = "franchisee",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true,
+                    IsActive = true,
+                    OrganizationId = OrganizationConstants.FranchiseeOrganizationId
+                };
+                var userInDb = await _userManager.FindByEmailAsync(user.Email);
+                if (userInDb == null)
+                {
+                    await _userManager.CreateAsync(user, UserConstants.DefaultPassword);
+                    await _userManager.AddToRoleAsync(user, RoleConstants.Manager);
+                    _logger.LogInformation(_localizer["Seeded Franchisee Manager."]);
+                }
+            }).GetAwaiter().GetResult();
+        }
+
+        private void AddManagerPermissions()
+        {
+            Task.Run(async () =>
+            {
+                var managerRole = await _roleManager.FindByNameAsync(RoleConstants.Manager);
+                if (managerRole == null)
+                {
+                    return;
+                }
+
+                string[] managerPermissions =
+                {
+                    SharedPermissions.Reporting.View,
+                    SharedPermissions.Reporting.Royalties,
+                    SharedPermissions.Sales.View,
+                    SharedPermissions.Sales.ViewAll,
+                    SharedPermissions.Sales.Refund,
+                    SharedPermissions.Stores.View,
+                    SharedPermissions.Stores.ViewAll,
+                    SharedPermissions.TillSessions.View,
+                    SharedPermissions.TillSessions.ViewAll,
+                    SharedPermissions.Products.View,
+                    SharedPermissions.Products.ViewAll
+                };
+
+                foreach (string permission in managerPermissions)
+                {
+                    await _roleManager.AddPermissionClaimAsync(managerRole, permission);
+                }
+            }).GetAwaiter().GetResult();
         }
 
         // A cashier needs enough permissions to run the POS flow in their own store.
@@ -87,7 +147,8 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence
                     SharedPermissions.CartItems.Remove,
                     SharedPermissions.Sales.View,
                     SharedPermissions.Sales.ViewAll,
-                    SharedPermissions.Sales.Register
+                    SharedPermissions.Sales.Register,
+                    SharedPermissions.Reporting.View
                 };
 
                 foreach (string permission in staffPermissions)

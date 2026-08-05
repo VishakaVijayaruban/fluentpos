@@ -33,7 +33,7 @@ namespace FluentPOS.Modules.Organizations.Core.Features.Organizations.Queries
         {
             var organizations = await _context.Organizations.AsNoTracking()
                 .OrderBy(o => o.Name)
-                .Select(o => new GetOrganizationsResponse(o.Id, o.Name, o.Detail))
+                .Select(o => new GetOrganizationsResponse(o.Id, o.Name, o.Detail, o.RoyaltyRatePercent))
                 .ToListAsync(cancellationToken);
 
             return await Result<List<GetOrganizationsResponse>>.SuccessAsync(organizations);
