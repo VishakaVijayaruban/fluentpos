@@ -7,21 +7,25 @@
 // --------------------------------------------------------------------------------------------------
 
 using System;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 
 namespace FluentPOS.Modules.Inventory.Core.Entities
 {
-    public class Stock : BaseEntity
+    public class Stock : BaseEntity, IMustHaveStore
     {
         public Stock()
         {
         }
 
-        public Stock(Guid productId)
+        public Stock(Guid productId, Guid storeId)
         {
             ProductId = productId;
+            StoreId = storeId;
             LastUpdatedOn = DateTime.UtcNow;
         }
+
+        public Guid StoreId { get; set; }
 
         public Guid ProductId { get; private set; }
 

@@ -48,6 +48,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
                 entity.HasOne(p => p.VatRate)
                     .WithMany()
                     .HasForeignKey(p => p.VatRateId)
+                    .IsRequired()
                     .OnDelete(DeleteBehavior.Restrict);
 
                 if (persistenceOptions.UseMsSql)
@@ -55,8 +56,6 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
                     entity.Property(p => p.Price)
                         .HasColumnType("decimal(23, 2)");
                     entity.Property(p => p.Cost)
-                        .HasColumnType("decimal(23, 2)");
-                    entity.Property(p => p.AlertQuantity)
                         .HasColumnType("decimal(23, 2)");
                 }
             });
@@ -71,6 +70,20 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Extensions
 
                 entity.HasIndex(v => v.Name)
                     .IsUnique();
+            });
+
+            builder.Entity<StoreProduct>(entity =>
+            {
+                entity.ToTable(name: "StoreProducts");
+
+                // One overlay per product per store.
+                entity.HasIndex(sp => new { sp.StoreId, sp.ProductId })
+                    .IsUnique();
+
+                entity.HasOne(sp => sp.Product)
+                    .WithMany()
+                    .HasForeignKey(sp => sp.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             builder.Entity<BrandExtendedAttribute>(entity =>

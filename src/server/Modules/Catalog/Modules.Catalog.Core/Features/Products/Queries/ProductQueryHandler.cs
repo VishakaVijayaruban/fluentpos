@@ -97,6 +97,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Queries
 #pragma warning restore RCS1046 // Asynchronous method name should end with 'Async'.
         {
             var product = await _context.Products.AsNoTracking()
+                .Include(p => p.VatRate)
                 .Where(p => p.Id == query.Id)
                 .FirstOrDefaultAsync(cancellationToken);
 

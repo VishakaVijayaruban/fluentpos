@@ -11,6 +11,7 @@ import { DataPropertyGetterPipe } from '../pipes/data-property-getter.pipe';
 import { BrandApiService } from '../api/catalog/brand-api.service';
 import { CategoryApiService } from '../api/catalog/category-api.service';
 import { ProductApiService } from '../api/catalog/product-api.service';
+import { VatRateApiService } from '../api/catalog/vat-rate-api.service';
 import { CustomerApiService } from '../api/people/customer-api.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessDenialComponent } from './components/access-denial/access-denial.component';
@@ -47,7 +48,7 @@ import { UploaderComponent } from './components/uploader/uploader.component';
     }),
   ],
   providers: [
-    BrandApiService, CategoryApiService, ProductApiService,
+    BrandApiService, CategoryApiService, ProductApiService, VatRateApiService,
     CustomerApiService,
     IdentityApiService, UserApiService, RoleApiService
   ],

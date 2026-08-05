@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using FluentPOS.Modules.Identity.Core.Entities;
 using FluentPOS.Modules.Identity.Core.Exceptions;
 using FluentPOS.Modules.Identity.Core.Settings;
+using FluentPOS.Shared.Core.Constants;
 using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Interfaces.Services.Identity;
 using FluentPOS.Shared.Core.Settings;
@@ -143,7 +144,7 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
                 permissionClaims.AddRange(allPermissionsForThisRoles);
             }
 
-            return new List<Claim>
+            var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Email, user.Email),
@@ -151,10 +152,17 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Services
                 new(ClaimTypes.Name, user.FirstName),
                 new(ClaimTypes.Surname, user.LastName),
                 new("ipAddress", ipAddress)
+            };
+
+            if (user.StoreId.HasValue)
+            {
+                claims.Add(new Claim(ApplicationClaimTypes.Store, user.StoreId.Value.ToString()));
             }
-            .Union(userClaims)
-            .Union(roleClaims)
-            .Union(permissionClaims);
+
+            return claims
+                .Union(userClaims)
+                .Union(roleClaims)
+                .Union(permissionClaims);
         }
 
         private string GenerateRefreshToken()

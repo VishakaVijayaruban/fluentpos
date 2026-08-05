@@ -62,7 +62,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
             }
 
             var product = _mapper.Map<Product>(command);
-            await ApplyVatRateAsync(product, command.VatRateId, cancellationToken);
+            await EnsureVatRateExistsAsync(command.VatRateId, cancellationToken);
             var uploadRequest = command.UploadRequest;
             if (uploadRequest != null)
             {
@@ -91,7 +91,7 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
             if (product != null)
             {
                 product = _mapper.Map<Product>(command);
-                await ApplyVatRateAsync(product, command.VatRateId, cancellationToken);
+                await EnsureVatRateExistsAsync(command.VatRateId, cancellationToken);
                 var uploadRequest = command.UploadRequest;
                 if (uploadRequest != null)
                 {
@@ -130,21 +130,12 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Commands
             }
         }
 
-        // The VAT rate table is the source of truth for Tax whenever a rate is linked.
-        private async Task ApplyVatRateAsync(Product product, Guid? vatRateId, CancellationToken cancellationToken)
+        private async Task EnsureVatRateExistsAsync(Guid vatRateId, CancellationToken cancellationToken)
         {
-            if (vatRateId == null)
-            {
-                return;
-            }
-
-            var vatRate = await _context.VatRates.AsNoTracking().FirstOrDefaultAsync(v => v.Id == vatRateId, cancellationToken);
-            if (vatRate == null)
+            if (!await _context.VatRates.AnyAsync(v => v.Id == vatRateId, cancellationToken))
             {
                 throw new CatalogException(_localizer["VAT Rate Not Found!"], HttpStatusCode.NotFound);
             }
-
-            product.Tax = vatRate.Rate;
         }
     }
 }

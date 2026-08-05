@@ -148,6 +148,41 @@ namespace FluentPOS.Shared.Core.Constants
             public const string ViewAll = "Permissions.VatRates.ViewAll";
         }
 
+        [DisplayName("Organizations")]
+        [Description("Organizations Permissions")]
+        public static class Organizations
+        {
+            public const string ViewAll = "Permissions.Organizations.ViewAll";
+        }
+
+        [DisplayName("Stores")]
+        [Description("Stores Permissions")]
+        public static class Stores
+        {
+            public const string View = "Permissions.Stores.View";
+            public const string ViewAll = "Permissions.Stores.ViewAll";
+            public const string Register = "Permissions.Stores.Register";
+            public const string Update = "Permissions.Stores.Update";
+            public const string Remove = "Permissions.Stores.Remove";
+        }
+
+        [DisplayName("Terminals")]
+        [Description("Terminals Permissions")]
+        public static class Terminals
+        {
+            public const string ViewAll = "Permissions.Terminals.ViewAll";
+            public const string Register = "Permissions.Terminals.Register";
+        }
+
+        [DisplayName("StoreProducts")]
+        [Description("Store Products Permissions")]
+        public static class StoreProducts
+        {
+            public const string ViewAll = "Permissions.StoreProducts.ViewAll";
+            public const string Upsert = "Permissions.StoreProducts.Upsert";
+            public const string Remove = "Permissions.StoreProducts.Remove";
+        }
+
         [DisplayName("Products Extended Attributes")]
         [Description("Products Extended Attributes Permissions")]
         public static class ProductsExtendedAttributes

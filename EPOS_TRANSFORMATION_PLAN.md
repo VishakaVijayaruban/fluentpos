@@ -206,16 +206,41 @@ Prepares the ground; no functional change visible to users.
    OrderBy-after-ProjectTo queries in product/sales list endpoints, barcode uniqueness checked
    against the symbology name, permission claims filtered by hardcoded `LOCAL AUTHORITY` issuer.
 
-### Phase 1 — Multi-store core (the big one)
-1. Organization module: Organization, Store, Terminal entities + CRUD + seeding.
-2. Tenancy plumbing: claims, `ICurrentUser` extension, `ITenantContext`, global query filters.
-3. Store-dimension migration: `Stock`/`StockTransaction` keyed by store; Orders/Carts store-stamped;
-   `StoreProduct` overlay (per-store price/ranging/reorder point).
-4. Store-scoped permissions: extend the existing permission system with store-set restrictions
-   (the franchise "see only your own data" requirement — enforced by query filters, surfaced by
-   permissions).
-5. Exit criterion: two seeded stores, one product added centrally visible in both, independent
-   stock levels, tokens scoped per store, cross-store data access provably impossible.
+### Phase 1 — Multi-store core (the big one) — ✅ DONE (2026-08-05)
+1. ✅ Organizations module (`Modules/Organizations/*`): Organization, Store (with `IsDefault`),
+   Terminal entities; Store CRUD + Terminal register/list + Org list APIs under
+   `api/v1/organization/*`; seeded org + two stores (fixed GUIDs in
+   `Shared.Core/Constants/OrganizationConstants.cs`) + one till each; `IStoreService` integration
+   interface (exists/default-store).
+2. ✅ Tenancy plumbing: `IMustHaveStore` marker, `ITenantContext` (reads `storeId` JWT claim),
+   `ModuleDbContext` applies a global query filter to every `IMustHaveStore` entity and
+   auto-stamps the tenant's store on insert. Head-office users (no store claim) are unscoped.
+3. ✅ Store dimension: `Stock`/`StockTransaction` (unique per store+product), `Order`,
+   `Transaction`, `Cart` all store-stamped; carts resolve store from command → token → default
+   store; sales inherit the cart's store; `StoreProduct` overlay (price override, ranging flag,
+   reorder point/qty) with upsert/list/remove APIs; checkout uses the store-effective price via
+   `IProductService.GetDetailsAsync(productId, storeId)`.
+4. ✅ Store-scoped identity: `FluentUser.StoreId` (null = HQ), `storeId` claim in tokens, staff
+   seeded to Store One (backfilled on existing DBs), Staff role granted the POS permission set.
+   Existing store-scoped rows backfilled to the default store in migrations.
+5. ✅ Exit criteria verified end-to-end: two seeded stores; central product sold in both with
+   Store Two price override honored at checkout (99.99 vs 200); independent stock rows per store;
+   staff token scoped to Store One; staff blocked from other-store carts (403), other-store orders
+   invisible (404/filtered lists) — enforced at the EF query-filter level, not per query.
+
+   Known Phase 1 limitations (carry into Phase 2): `GetById` response caching is not store-aware
+   (a scoped user who knows a foreign entity's GUID could read it from cache — key caches by
+   store or bypass cache for store-scoped entities); HQ users transact against the default store
+   when no store is specified; store assignment for users is seed/DB-only (no admin API yet).
+
+   **Fresh-database reset (2026-08-05):** since no production data exists, all historical
+   migrations were squashed into a single `Initial` migration per module context (including
+   Identity and the shared Application context, which gained a design-time factory). Legacy
+   compatibility shims were removed: no store backfills, and `Product.Tax`/`TaxMethod`/
+   `IsAlert`/`AlertQuantity` are gone — `Product.VatRateId` is now required and the single
+   source of truth for tax (DTOs expose a computed `Tax` percentage), reorder settings live
+   solely on `StoreProduct`, and checkout computes line tax as `price × qty × rate%`. A new
+   environment bootstraps from empty: run the API once and it migrates + seeds everything.
 
 ### Phase 2 — Retail operations (make it a real EPOS)
 1. **Purchasing module** (new, follows module pattern): Supplier, PurchaseOrder + lines,

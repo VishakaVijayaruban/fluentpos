@@ -8,20 +8,24 @@
 
 using System;
 using FluentPOS.Modules.Inventory.Core.Enums;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 
 namespace FluentPOS.Modules.Inventory.Core.Entities
 {
-    public class StockTransaction : BaseEntity
+    public class StockTransaction : BaseEntity, IMustHaveStore
     {
-        public StockTransaction(Guid productId, decimal quantity, TransactionType type, string referenceNumber)
+        public StockTransaction(Guid productId, decimal quantity, TransactionType type, string referenceNumber, Guid storeId)
         {
             ProductId = productId;
             Quantity = quantity;
             Type = type;
             ReferenceNumber = referenceNumber;
+            StoreId = storeId;
             Timestamp = DateTime.UtcNow;
         }
+
+        public Guid StoreId { get; set; }
 
         public Guid ProductId { get; private set; }
 

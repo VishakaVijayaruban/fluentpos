@@ -19,25 +19,25 @@ namespace FluentPOS.Modules.Sales.Core.Tests.Entities.Tests
         }
 
         [Fact]
-        public void Computes_line_totals_when_product_is_added()
+        public void Computes_line_totals_from_vat_percentage_when_product_is_added()
         {
             // Arrange
             var order = Order.InitializeOrder();
             var productId = Guid.NewGuid();
 
             // Act
-            order.AddProduct(productId, "London Dry Gin", quantity: 2, rate: 10m, tax: 1m);
+            order.AddProduct(productId, "London Dry Gin", quantity: 2, rate: 10m, vatRatePercent: 20m);
 
             // Assert
             var line = Assert.Single(order.Products);
             Assert.Equal(productId, line.ProductId);
             Assert.Equal(2, line.Quantity);
             Assert.Equal(20m, line.Price);
-            Assert.Equal(2m, line.Tax);
-            Assert.Equal(22m, line.Total);
+            Assert.Equal(4m, line.Tax);
+            Assert.Equal(24m, line.Total);
             Assert.Equal(20m, order.SubTotal);
-            Assert.Equal(2m, order.Tax);
-            Assert.Equal(22m, order.Total);
+            Assert.Equal(4m, order.Tax);
+            Assert.Equal(24m, order.Total);
         }
 
         [Fact]
@@ -47,16 +47,16 @@ namespace FluentPOS.Modules.Sales.Core.Tests.Entities.Tests
             var order = Order.InitializeOrder();
 
             // Act
-            order.AddProduct(Guid.NewGuid(), "Gin", quantity: 1, rate: 10m, tax: 2m);
-            order.AddProduct(Guid.NewGuid(), "Tonic", quantity: 4, rate: 1.5m, tax: 0.3m);
+            order.AddProduct(Guid.NewGuid(), "Gin", quantity: 1, rate: 10m, vatRatePercent: 20m);
+            order.AddProduct(Guid.NewGuid(), "Tonic", quantity: 4, rate: 1.5m, vatRatePercent: 0m);
 
             // Assert
             Assert.Equal(2, order.Products.Count);
             Assert.Equal(12m, order.Products.First().Total);
-            Assert.Equal(7.2m, order.Products.Last().Total);
+            Assert.Equal(6m, order.Products.Last().Total);
             Assert.Equal(16m, order.SubTotal);
-            Assert.Equal(3.2m, order.Tax);
-            Assert.Equal(19.2m, order.Total);
+            Assert.Equal(2m, order.Tax);
+            Assert.Equal(18m, order.Total);
         }
 
         [Fact]

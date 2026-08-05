@@ -32,15 +32,15 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Services
         }
 
         /// <inheritdoc/>
-        public async Task RecordTransaction(Guid productId, decimal quantity, string referenceNumber, bool isSale = true)
+        public async Task RecordTransaction(Guid productId, decimal quantity, string referenceNumber, Guid storeId, bool isSale = true)
         {
             // TODO - Move this to MediatR, maybe? - Important, DO NOT make an API endpoint for this.
 
             var transactionType = isSale ? TransactionType.Sale : TransactionType.Purchase;
-            var stockTransaction = new StockTransaction(productId, quantity, transactionType, referenceNumber);
+            var stockTransaction = new StockTransaction(productId, quantity, transactionType, referenceNumber, storeId);
             await _context.StockTransactions.AddAsync(stockTransaction);
 
-            var stockRecord = _context.Stocks.FirstOrDefault(s => s.ProductId == productId);
+            var stockRecord = _context.Stocks.FirstOrDefault(s => s.ProductId == productId && s.StoreId == storeId);
             switch (transactionType)
             {
                 case TransactionType.Sale:
@@ -51,7 +51,7 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Services
                     }
                     else
                     {
-                        stockRecord = new Stock(productId);
+                        stockRecord = new Stock(productId, storeId);
                         stockRecord.ReduceQuantity(quantity);
                         _context.Stocks.Add(stockRecord);
                     }
@@ -65,7 +65,7 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Services
                     }
                     else
                     {
-                        stockRecord = new Stock(productId);
+                        stockRecord = new Stock(productId, storeId);
                         stockRecord.IncreaseQuantity(quantity);
                         _context.Stocks.Add(stockRecord);
                     }

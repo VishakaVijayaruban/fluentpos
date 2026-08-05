@@ -17,6 +17,8 @@ using FluentPOS.Modules.People.Core.Entities;
 using FluentPOS.Modules.People.Core.Exceptions;
 using FluentPOS.Modules.People.Core.Features.Carts.Events;
 using FluentPOS.Shared.Core.Constants;
+using FluentPOS.Shared.Core.IntegrationServices.Organization;
+using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Wrapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -34,17 +36,23 @@ namespace FluentPOS.Modules.People.Core.Features.Carts.Commands
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<CartCommandHandler> _localizer;
         private readonly IDistributedCache _cache;
+        private readonly ITenantContext _tenant;
+        private readonly IStoreService _storeService;
 
         public CartCommandHandler(
             IPeopleDbContext context,
             IMapper mapper,
             IStringLocalizer<CartCommandHandler> localizer,
-            IDistributedCache cache)
+            IDistributedCache cache,
+            ITenantContext tenant,
+            IStoreService storeService)
         {
             _context = context;
             _mapper = mapper;
             _localizer = localizer;
             _cache = cache;
+            _tenant = tenant;
+            _storeService = storeService;
         }
 
 #pragma warning disable RCS1046 // Asynchronous method name should end with 'Async'.
@@ -57,6 +65,17 @@ namespace FluentPOS.Modules.People.Core.Features.Carts.Commands
             }
 
             var cart = _mapper.Map<Cart>(command);
+            cart.StoreId = command.StoreId ?? _tenant.StoreId ?? await _storeService.GetDefaultStoreIdAsync();
+            if (_tenant.StoreId.HasValue && cart.StoreId != _tenant.StoreId.Value)
+            {
+                throw new PeopleException(_localizer["You cannot create a cart for another store."], HttpStatusCode.Forbidden);
+            }
+
+            if (!await _storeService.ExistsAsync(cart.StoreId))
+            {
+                throw new PeopleException(_localizer["Store Not Found!"], HttpStatusCode.NotFound);
+            }
+
             cart.AddDomainEvent(new CartCreatedEvent(cart));
             await _context.Carts.AddAsync(cart, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

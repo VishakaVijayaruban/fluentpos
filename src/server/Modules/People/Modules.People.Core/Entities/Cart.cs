@@ -9,12 +9,15 @@
 using System;
 using System.Collections.Generic;
 using FluentPOS.Modules.People.Core.Entities.ExtendedAttributes;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 
 namespace FluentPOS.Modules.People.Core.Entities
 {
-    public class Cart : BaseEntity
+    public class Cart : BaseEntity, IMustHaveStore
     {
+        public Guid StoreId { get; set; }
+
         public Guid CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }

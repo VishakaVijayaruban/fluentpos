@@ -62,10 +62,14 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
             if (cartDetails.Data.CartItems == null) throw new Exception("Empty Cart!");
             var customer = cartDetails.Data.Customer;
 
+            // The sale happens in the store the cart was opened in.
+            Guid storeId = cartDetails.Data.StoreId;
+            order.StoreId = storeId;
+
             order.AddCustomer(customer);
             foreach (var item in cartDetails.Data.CartItems)
             {
-                var productResponse = await _productService.GetDetailsAsync(item.ProductId);
+                var productResponse = await _productService.GetDetailsAsync(item.ProductId, storeId);
                 if (productResponse.Succeeded)
                 {
                     var product = productResponse.Data;
@@ -74,7 +78,7 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
             }
 
             order.MarkAsPaid();
-            var transaction = Transaction.Record(order.Id, command.PaymentType, order.Total, command.TenderedAmount, command.Note);
+            var transaction = Transaction.Record(order.Id, command.PaymentType, order.Total, command.TenderedAmount, command.Note, storeId);
 
             await _salesContext.Orders.AddAsync(order, cancellationToken);
             await _salesContext.Transactions.AddAsync(transaction, cancellationToken);
@@ -82,7 +86,7 @@ namespace FluentPOS.Modules.Sales.Core.Features.Sales.Commands
             await _cartService.RemoveCartAsync(command.CartId);
             foreach (var product in order.Products)
             {
-                await _stockService.RecordTransaction(product.ProductId, product.Quantity, order.ReferenceNumber);
+                await _stockService.RecordTransaction(product.ProductId, product.Quantity, order.ReferenceNumber, storeId);
             }
 
             return await Result<Guid>.SuccessAsync(order.Id, string.Format(_localizer["Order {0} Created"], order.ReferenceNumber));

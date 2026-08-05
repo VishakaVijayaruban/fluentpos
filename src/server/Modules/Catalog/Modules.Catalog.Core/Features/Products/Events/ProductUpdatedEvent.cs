@@ -30,15 +30,11 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Events
 
         public string ImageUrl { get; }
 
-        public decimal Tax { get; }
+        public Guid VatRateId { get; }
 
-        public string TaxMethod { get; }
+        public string Barcode { get; }
 
         public string BarcodeSymbology { get; }
-
-        public bool IsAlert { get; }
-
-        public decimal AlertQuantity { get; }
 
         public string Detail { get; }
 
@@ -52,11 +48,9 @@ namespace FluentPOS.Modules.Catalog.Core.Features.Products.Events
             Price = product.Price;
             Cost = product.Cost;
             ImageUrl = product.ImageUrl;
-            Tax = product.Tax;
-            TaxMethod = product.TaxMethod;
+            VatRateId = product.VatRateId;
+            Barcode = product.Barcode;
             BarcodeSymbology = product.BarcodeSymbology;
-            IsAlert = product.IsAlert;
-            AlertQuantity = product.AlertQuantity;
             Detail = product.Detail;
             AggregateId = product.Id;
             RelatedEntities = new[] { typeof(Product) };

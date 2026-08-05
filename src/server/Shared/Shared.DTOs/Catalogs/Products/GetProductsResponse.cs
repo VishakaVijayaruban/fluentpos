@@ -10,5 +10,6 @@ using System;
 
 namespace FluentPOS.Shared.DTOs.Catalogs.Products
 {
-    public record GetProductsResponse(Guid Id, string Name, string LocaleName, string Barcode, string BarcodeSymbology, string Detail, Guid BrandId, string BrandName, Guid CategoryId, string CategoryName, decimal Price, decimal Cost, string ImageUrl, decimal Tax, string TaxMethod, Guid? VatRateId, bool IsAlert, decimal AlertQuantity);
+    // Tax is the applied VAT percentage, resolved from the linked VAT rate.
+    public record GetProductsResponse(Guid Id, string Name, string LocaleName, string Barcode, string BarcodeSymbology, string Detail, Guid BrandId, string BrandName, Guid CategoryId, string CategoryName, decimal Price, decimal Cost, string ImageUrl, decimal Tax, Guid VatRateId);
 }

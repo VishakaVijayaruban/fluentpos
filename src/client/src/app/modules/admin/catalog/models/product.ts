@@ -11,11 +11,11 @@ export interface Product {
   price: number;
   cost: number;
   imageUrl: string;
+  // VAT percentage resolved server-side from the linked VAT rate (read-only).
   tax: number;
-  taxMethod: string;
+  vatRateId: string;
+  barcode?: string;
   barcodeSymbology: string;
-  isAlert?: boolean;
-  alertQuantity: number;
   detail: string;
   uploadRequest?: Upload;
 }

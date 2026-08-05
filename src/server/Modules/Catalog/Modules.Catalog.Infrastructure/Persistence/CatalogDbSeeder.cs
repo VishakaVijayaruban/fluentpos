@@ -22,6 +22,10 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
 {
     public class CatalogDbSeeder : IDatabaseSeeder
     {
+        private static readonly Guid ZeroVatRateId = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000001");
+        private static readonly Guid ReducedVatRateId = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000002");
+        private static readonly Guid StandardVatRateId = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000003");
+
         private readonly ILogger<CatalogDbSeeder> _logger;
         private readonly CatalogDbContext _db;
         private readonly IStringLocalizer<CatalogDbSeeder> _localizer;
@@ -58,9 +62,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
                 // UK VAT rates; fixed ids keep references stable across environments.
                 _db.VatRates.AddRange(new List<VatRate>
                 {
-                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000001"), Name = "Zero", Rate = 0m },
-                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000002"), Name = "Reduced", Rate = 5m },
-                    new() { Id = Guid.Parse("6f3a1a2b-0000-4000-8000-000000000003"), Name = "Standard", Rate = 20m }
+                    new() { Id = ZeroVatRateId, Name = "Zero", Rate = 0m },
+                    new() { Id = ReducedVatRateId, Name = "Reduced", Rate = 5m },
+                    new() { Id = StandardVatRateId, Name = "Standard", Rate = 20m }
                 });
                 _db.SaveChanges();
                 _logger.LogInformation(_localizer["Seeded VAT Rates."]);
@@ -129,6 +133,12 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
                     {
                         foreach (var product in products)
                         {
+                            // Seed data predates the VAT rate table; default to the UK standard rate.
+                            if (product.VatRateId == Guid.Empty)
+                            {
+                                product.VatRateId = StandardVatRateId;
+                            }
+
                             await _db.Products.AddAsync(product);
                         }
                     }

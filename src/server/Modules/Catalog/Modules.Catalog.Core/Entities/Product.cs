@@ -33,11 +33,8 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
 
         public string ImageUrl { get; set; }
 
-        public decimal Tax { get; set; }
-
-        public string TaxMethod { get; set; }
-
-        public Guid? VatRateId { get; set; }
+        // The VAT rate table is the single source of truth for tax.
+        public Guid VatRateId { get; set; }
 
         public virtual VatRate VatRate { get; set; }
 
@@ -45,10 +42,6 @@ namespace FluentPOS.Modules.Catalog.Core.Entities
         public string Barcode { get; set; }
 
         public string BarcodeSymbology { get; set; }
-
-        public bool IsAlert { get; set; }
-
-        public decimal AlertQuantity { get; set; }
 
         public string Detail { get; set; }
 

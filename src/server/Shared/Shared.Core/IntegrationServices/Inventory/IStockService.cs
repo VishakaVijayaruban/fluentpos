@@ -22,8 +22,9 @@ namespace FluentPOS.Shared.Core.IntegrationServices.Inventory
         /// <param name="productId">Product Id.</param>
         /// <param name="quantity">Quantity.</param>
         /// <param name="referenceNumber">Reference Number.</param>
+        /// <param name="storeId">Store the stock movement belongs to.</param>
         /// <param name="isSale">Is Sale.</param>
         /// <returns>Task Completed.</returns>
-        public Task RecordTransaction(Guid productId, decimal quantity, string referenceNumber, bool isSale = true);
+        public Task RecordTransaction(Guid productId, decimal quantity, string referenceNumber, Guid storeId, bool isSale = true);
     }
 }

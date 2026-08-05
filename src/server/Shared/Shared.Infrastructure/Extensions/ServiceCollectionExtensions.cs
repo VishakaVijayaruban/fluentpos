@@ -72,6 +72,8 @@ namespace FluentPOS.Shared.Infrastructure.Extensions
         {
             services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddHttpContextAccessor();
+            services.AddScoped<ITenantContext, TenantContext>();
             services.AddPersistenceSettings(config);
             services
                 .AddDatabaseContext<ApplicationDbContext>()

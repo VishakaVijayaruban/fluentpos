@@ -15,6 +15,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using FluentPOS.Shared.Core.Interfaces.Serialization;
+using FluentPOS.Shared.Core.Interfaces.Services;
 
 namespace FluentPOS.Modules.Sales.Infrastructure.Persistence
 {
@@ -30,8 +31,9 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence
             IMediator mediator,
             IEventLogger eventLogger,
             IOptions<PersistenceSettings> persistenceOptions,
-            IJsonSerializer json)
-                : base(options, mediator, eventLogger, persistenceOptions, json)
+            IJsonSerializer json,
+            ITenantContext tenant)
+                : base(options, mediator, eventLogger, persistenceOptions, json, tenant)
         {
             _persistenceOptions = persistenceOptions.Value;
             _json = json;

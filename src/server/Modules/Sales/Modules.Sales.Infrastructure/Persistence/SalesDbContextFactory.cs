@@ -48,7 +48,8 @@ namespace FluentPOS.Modules.Sales.Infrastructure.Persistence
                 new NullMediator(),
                 new NullEventLogger(),
                 persistenceSettings,
-                new NullJsonSerializer());
+                new NullJsonSerializer(),
+                new DesignTimeTenantContext());
         }
 
         private class NullMediator : IMediator

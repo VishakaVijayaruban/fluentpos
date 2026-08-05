@@ -15,7 +15,10 @@ namespace FluentPOS.Shared.DTOs.People.Carts
 {
     public record GetCartByIdResponse(Guid Id, Guid CustomerId, DateTime Timestamp)
     {
+        public Guid StoreId { get; set; }
+
         public GetCustomerByIdResponse Customer { get; set; }
+
         public ICollection<GetCartItemByIdResponse> CartItems { get; set; }
     }
 }

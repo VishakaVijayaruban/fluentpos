@@ -15,5 +15,9 @@ namespace FluentPOS.Modules.People.Core.Features.Carts.Commands
     public class CreateCartCommand : IRequest<Result<Guid>>
     {
         public Guid CustomerId { get; set; }
+
+        // Optional: store-scoped users inherit their token's store; head-office users
+        // fall back to the default store when omitted.
+        public Guid? StoreId { get; set; }
     }
 }

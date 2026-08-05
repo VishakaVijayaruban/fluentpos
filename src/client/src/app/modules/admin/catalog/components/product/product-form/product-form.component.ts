@@ -10,9 +10,11 @@ import { BrandParams } from '../../../models/brandParams';
 import { Category } from '../../../models/category';
 import { CategoryParams } from '../../../models/categoryParams';
 import {Product} from '../../../models/product';
+import { VatRate } from '../../../models/vatRate';
 import { BrandService } from '../../../services/brand.service';
 import { CategoryService } from '../../../services/category.service';
 import {ProductService} from '../../../services/product.service';
+import { VatRateService } from '../../../services/vat-rate.service';
 
 @Component({
   selector: 'app-product-form',
@@ -26,12 +28,13 @@ export class ProductFormComponent implements OnInit {
   brandParams = new BrandParams();
   categories: PaginatedResult<Category>;
   categoryParams = new CategoryParams();
+  vatRates: VatRate[];
 
   url: any = [];
   upload = new Upload();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: Product, private productService: ProductService, private brandService: BrandService, private categoryService: CategoryService,
-        private toastr: ToastrService, private fb: FormBuilder) {
+        private vatRateService: VatRateService, private toastr: ToastrService, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
@@ -40,6 +43,7 @@ export class ProductFormComponent implements OnInit {
     this.categoryParams.pageSize = 50;
     this.getBrands();
     this.getCategories();
+    this.getVatRates();
     this.loadProductImage();
   }
 
@@ -52,11 +56,9 @@ export class ProductFormComponent implements OnInit {
       localeName: [this.data && this.data.localeName, Validators.required],
       price: [this.data && this.data.price, Validators.required],
       cost: [this.data && this.data.cost, Validators.required],
-      tax: [this.data && this.data.tax , Validators.required],
-      taxMethod: [this.data && this.data.taxMethod, Validators.required],
+      vatRateId: [this.data && this.data.vatRateId, Validators.required],
+      barcode: [this.data && this.data.barcode],
       barcodeSymbology: [this.data && this.data.barcodeSymbology, Validators.required],
-      isAlert: [!!(this.data && this.data.isAlert), Validators.required],
-      alertQuantity: [this.data && this.data.alertQuantity, Validators.required],
       detail: [this.data && this.data.detail, Validators.required]
     });
     if (this.productForm.get('id').value === '' || this.productForm.get('id').value == null) {
@@ -72,6 +74,10 @@ export class ProductFormComponent implements OnInit {
 
   getCategories() {
     this.categoryService.getCategories(this.categoryParams).subscribe((response) => { this.categories = response; });
+  }
+
+  getVatRates() {
+    this.vatRateService.getVatRates().subscribe((response) => { this.vatRates = response.data; });
   }
 
   loadProductImage() {

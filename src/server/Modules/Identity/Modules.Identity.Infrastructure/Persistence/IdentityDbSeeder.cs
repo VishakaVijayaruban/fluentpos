@@ -18,6 +18,7 @@ using FluentPOS.Shared.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using SharedPermissions = FluentPOS.Shared.Core.Constants.Permissions;
 
 namespace FluentPOS.Modules.Identity.Infrastructure.Persistence
 {
@@ -48,7 +49,52 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence
             AddDefaultRoles();
             AddSuperAdmin();
             AddStaff();
+            AddStaffPermissions();
             _db.SaveChanges();
+        }
+
+        // A cashier needs enough permissions to run the POS flow in their own store.
+        private void AddStaffPermissions()
+        {
+            Task.Run(async () =>
+            {
+                var staffRole = await _roleManager.FindByNameAsync(RoleConstants.Staff);
+                if (staffRole == null)
+                {
+                    return;
+                }
+
+                string[] staffPermissions =
+                {
+                    SharedPermissions.Products.View,
+                    SharedPermissions.Products.ViewAll,
+                    SharedPermissions.Brands.View,
+                    SharedPermissions.Brands.ViewAll,
+                    SharedPermissions.Categories.View,
+                    SharedPermissions.Categories.ViewAll,
+                    SharedPermissions.VatRates.ViewAll,
+                    SharedPermissions.Customers.View,
+                    SharedPermissions.Customers.ViewAll,
+                    SharedPermissions.Customers.Register,
+                    SharedPermissions.Carts.View,
+                    SharedPermissions.Carts.ViewAll,
+                    SharedPermissions.Carts.Create,
+                    SharedPermissions.Carts.Remove,
+                    SharedPermissions.CartItems.View,
+                    SharedPermissions.CartItems.ViewAll,
+                    SharedPermissions.CartItems.Add,
+                    SharedPermissions.CartItems.Update,
+                    SharedPermissions.CartItems.Remove,
+                    SharedPermissions.Sales.View,
+                    SharedPermissions.Sales.ViewAll,
+                    SharedPermissions.Sales.Register
+                };
+
+                foreach (string permission in staffPermissions)
+                {
+                    await _roleManager.AddPermissionClaimAsync(staffRole, permission);
+                }
+            }).GetAwaiter().GetResult();
         }
 
         private void AddDefaultRoles()
@@ -140,7 +186,8 @@ namespace FluentPOS.Modules.Identity.Infrastructure.Persistence
                     UserName = "staff",
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
-                    IsActive = true
+                    IsActive = true,
+                    StoreId = OrganizationConstants.DefaultStoreId
                 };
                 var basicUserInDb = await _userManager.FindByEmailAsync(basicUser.Email);
                 if (basicUserInDb == null)

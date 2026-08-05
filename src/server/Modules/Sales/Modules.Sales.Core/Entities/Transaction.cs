@@ -8,12 +8,15 @@
 
 using System;
 using FluentPOS.Modules.Sales.Core.Enums;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 
 namespace FluentPOS.Modules.Sales.Core.Entities
 {
-    public class Transaction : BaseEntity
+    public class Transaction : BaseEntity, IMustHaveStore
     {
+        public Guid StoreId { get; set; }
+
         public Guid OrderId { get; set; }
 
         public PaymentType PaymentType { get; set; }
@@ -26,11 +29,12 @@ namespace FluentPOS.Modules.Sales.Core.Entities
 
         public string Note { get; set; }
 
-        public static Transaction Record(Guid orderId, PaymentType paymentType, decimal amount, decimal tenderedAmount, string note)
+        public static Transaction Record(Guid orderId, PaymentType paymentType, decimal amount, decimal tenderedAmount, string note, Guid storeId)
         {
             return new Transaction
             {
                 OrderId = orderId,
+                StoreId = storeId,
                 PaymentType = paymentType,
                 Amount = amount,
                 TenderedAmount = tenderedAmount,

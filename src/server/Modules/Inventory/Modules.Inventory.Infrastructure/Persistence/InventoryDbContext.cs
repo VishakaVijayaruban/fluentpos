@@ -10,6 +10,7 @@ using FluentPOS.Modules.Inventory.Core.Abstractions;
 using FluentPOS.Modules.Inventory.Core.Entities;
 using FluentPOS.Shared.Core.EventLogging;
 using FluentPOS.Shared.Core.Interfaces.Serialization;
+using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Settings;
 using FluentPOS.Shared.Infrastructure.Persistence;
 using MediatR;
@@ -30,8 +31,9 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Persistence
             IMediator mediator,
             IEventLogger eventLogger,
             IOptions<PersistenceSettings> persistenceOptions,
-            IJsonSerializer json)
-                : base(options, mediator, eventLogger, persistenceOptions, json)
+            IJsonSerializer json,
+            ITenantContext tenant)
+                : base(options, mediator, eventLogger, persistenceOptions, json, tenant)
         {
             _persistenceOptions = persistenceOptions.Value;
             _json = json;
@@ -44,6 +46,11 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // One stock level per product per store.
+            modelBuilder.Entity<Stock>()
+                .HasIndex(s => new { s.StoreId, s.ProductId })
+                .IsUnique();
         }
     }
 }

@@ -8,13 +8,16 @@
 
 using System;
 using System.Collections.Generic;
+using FluentPOS.Shared.Core.Contracts;
 using FluentPOS.Shared.Core.Domain;
 using FluentPOS.Shared.DTOs.People.Customers;
 
 namespace FluentPOS.Modules.Sales.Core.Entities
 {
-    public class Order : BaseEntity
+    public class Order : BaseEntity, IMustHaveStore
     {
+        public Guid StoreId { get; set; }
+
         public string ReferenceNumber { get; private set; }
 
         public DateTime TimeStamp { get; private set; }
@@ -70,19 +73,22 @@ namespace FluentPOS.Modules.Sales.Core.Entities
             Products.Add(product);
         }
 
-        internal void AddProduct(Guid productId, string name, int quantity, decimal rate, decimal tax)
+        internal void AddProduct(Guid productId, string name, int quantity, decimal rate, decimal vatRatePercent)
         {
+            decimal linePrice = quantity * rate;
+            decimal lineTax = linePrice * vatRatePercent / 100m;
+
             Products.Add(new Product
             {
                 ProductId = productId,
                 Quantity = quantity,
-                Tax = tax * quantity,
-                Price = quantity * rate,
-                Total = (quantity * rate) + (tax * quantity)
+                Tax = lineTax,
+                Price = linePrice,
+                Total = linePrice + lineTax
             });
 
-            SubTotal += quantity * rate;
-            Tax += tax * quantity;
+            SubTotal += linePrice;
+            Tax += lineTax;
             Total = SubTotal + Tax - Discount;
         }
     }

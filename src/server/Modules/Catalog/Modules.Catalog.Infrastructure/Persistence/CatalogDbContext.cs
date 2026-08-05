@@ -14,6 +14,7 @@ using FluentPOS.Modules.Catalog.Infrastructure.Extensions;
 using FluentPOS.Shared.Core.EventLogging;
 using FluentPOS.Shared.Core.Interfaces;
 using FluentPOS.Shared.Core.Interfaces.Serialization;
+using FluentPOS.Shared.Core.Interfaces.Services;
 using FluentPOS.Shared.Core.Settings;
 using FluentPOS.Shared.Infrastructure.Persistence;
 using MediatR;
@@ -38,8 +39,9 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
             IMediator mediator,
             IEventLogger eventLogger,
             IOptions<PersistenceSettings> persistenceOptions,
-            IJsonSerializer json)
-                : base(options, mediator, eventLogger, persistenceOptions, json)
+            IJsonSerializer json,
+            ITenantContext tenant)
+                : base(options, mediator, eventLogger, persistenceOptions, json, tenant)
         {
             _persistenceOptions = persistenceOptions.Value;
             _json = json;
@@ -52,6 +54,8 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<VatRate> VatRates { get; set; }
+
+        public DbSet<StoreProduct> StoreProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

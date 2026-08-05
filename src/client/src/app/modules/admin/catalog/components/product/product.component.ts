@@ -48,10 +48,9 @@ export class ProductComponent implements OnInit {
       { name: 'Detail', dataKey: 'detail', isSortable: true, isShowable: true },
       { name: 'Price', dataKey: 'price', isSortable: true, isShowable: true },
       { name: 'Cost', dataKey: 'cost', isSortable: true, isShowable: true },
-      { name: 'Tax', dataKey: 'tax', isSortable: true , isShowable: true},
-      { name: 'TaxMethod', dataKey: 'taxMethod', isSortable: false , isShowable: false},
+      { name: 'VAT %', dataKey: 'tax', isSortable: true , isShowable: true},
+      { name: 'Barcode', dataKey: 'barcode', isSortable: true , isShowable: true},
       //{ name: 'BarcodeSymbology', dataKey: 'barcodeSymbology', isSortable: true, isShowable: true },
-      //{ name: 'IsAlert', dataKey: 'isAlert', isSortable: true, isShowable: true },
       { name: 'Action', dataKey: 'action', position: 'right' },
     ];
   }

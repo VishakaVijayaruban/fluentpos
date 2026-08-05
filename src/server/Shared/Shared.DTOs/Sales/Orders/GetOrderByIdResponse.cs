@@ -21,6 +21,9 @@ namespace FluentPOS.Shared.DTOs.Sales.Orders
               bool IsPaid,
               string Note,
               ICollection<ProductResponse> Products
-       );
+       )
+       {
+              public Guid StoreId { get; set; }
+       }
 
 }

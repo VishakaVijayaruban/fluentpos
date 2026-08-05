@@ -228,9 +228,6 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("AlertQuantity")
-                        .HasColumnType("numeric");
-
                     b.Property<string>("Barcode")
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
@@ -253,9 +250,6 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsAlert")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("LocaleName")
                         .HasColumnType("text");
 
@@ -265,13 +259,7 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("Tax")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("TaxMethod")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("VatRateId")
+                    b.Property<Guid>("VatRateId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -286,6 +274,40 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.HasIndex("VatRateId");
 
                     b.ToTable("Products", "Catalog");
+                });
+
+            modelBuilder.Entity("FluentPOS.Modules.Catalog.Core.Entities.StoreProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsRanged")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("ReorderPoint")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ReorderQuantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StoreId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("StoreProducts", "Catalog");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.Catalog.Core.Entities.VatRate", b =>
@@ -360,13 +382,25 @@ namespace FluentPOS.Modules.Catalog.Infrastructure.Persistence.Migrations
                     b.HasOne("FluentPOS.Modules.Catalog.Core.Entities.VatRate", "VatRate")
                         .WithMany()
                         .HasForeignKey("VatRateId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
 
                     b.Navigation("VatRate");
+                });
+
+            modelBuilder.Entity("FluentPOS.Modules.Catalog.Core.Entities.StoreProduct", b =>
+                {
+                    b.HasOne("FluentPOS.Modules.Catalog.Core.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FluentPOS.Modules.Catalog.Core.Entities.Brand", b =>

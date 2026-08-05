@@ -14,6 +14,7 @@ import {ProductFormComponent} from './components/product/product-form/product-fo
 import {BrandService} from './services/brand.service';
 import {CategoryService} from './services/category.service';
 import {ProductService} from './services/product.service';
+import {VatRateService} from './services/vat-rate.service';
 
 
 @NgModule({
@@ -33,7 +34,7 @@ import {ProductService} from './services/product.service';
     SharedModule
   ],
   providers: [
-    BrandService, CategoryService, ProductService
+    BrandService, CategoryService, ProductService, VatRateService
   ]
 })
 export class CatalogModule {

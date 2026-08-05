@@ -15,6 +15,11 @@ namespace FluentPOS.Shared.Core.IntegrationServices.Catalog
 {
     public interface IProductService
     {
-        Task<Result<GetProductByIdResponse>> GetDetailsAsync(Guid productId);
+        /// <summary>
+        /// Product details with store-effective pricing: when a store is supplied and it
+        /// has a price override for the product, that price is returned instead of the
+        /// central one.
+        /// </summary>
+        Task<Result<GetProductByIdResponse>> GetDetailsAsync(Guid productId, Guid? storeId = null);
     }
 }

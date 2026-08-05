@@ -8,11 +8,7 @@
     "Price": 10.5,
     "Cost": 8.5,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00001",
-    "IsAlert": true,
-    "AlertQuantity": 10,
     "Detail": "Sample Data"
   },
   {
@@ -24,11 +20,7 @@
     "Price": 999,
     "Cost": 950,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00002",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -40,11 +32,7 @@
     "Price": 399,
     "Cost": 350,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00003",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -56,11 +44,7 @@
     "Price": 499,
     "Cost": 450,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00004",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -72,11 +56,7 @@
     "Price": 499,
     "Cost": 450,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00005",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -88,11 +68,7 @@
     "Price": 299,
     "Cost": 250,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00006",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -104,11 +80,7 @@
     "Price": 1300,
     "Cost": 1200,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00007",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -120,11 +92,7 @@
     "Price": 1499,
     "Cost": 1400,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00008",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -136,11 +104,7 @@
     "Price": 1000,
     "Cost": 900,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00009",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -152,11 +116,7 @@
     "Price": 1200,
     "Cost": 1100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00010",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -168,11 +128,7 @@
     "Price": 1300,
     "Cost": 1200,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00011",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -184,11 +140,7 @@
     "Price": 700,
     "Cost": 600,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00012",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -200,11 +152,7 @@
     "Price": 400,
     "Cost": 300,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00013",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -216,11 +164,7 @@
     "Price": 550,
     "Cost": 500,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00014",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -232,11 +176,7 @@
     "Price": 1200,
     "Cost": 1000,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00015",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -248,11 +188,7 @@
     "Price": 900,
     "Cost": 800,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00016",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -264,11 +200,7 @@
     "Price": 2000,
     "Cost": 1800,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00017",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -280,11 +212,7 @@
     "Price": 2100,
     "Cost": 2000,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00018",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -296,11 +224,7 @@
     "Price": 600,
     "Cost": 500,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00019",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -312,11 +236,7 @@
     "Price": 1600,
     "Cost": 1200,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00020",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -328,11 +248,7 @@
     "Price": 1500,
     "Cost": 1400,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00021",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -344,11 +260,7 @@
     "Price": 1500,
     "Cost": 1450,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00022",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -360,11 +272,7 @@
     "Price": 1800,
     "Cost": 1700,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00023",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -376,11 +284,7 @@
     "Price": 900,
     "Cost": 600,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00024",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -392,11 +296,7 @@
     "Price": 1100,
     "Cost": 1000,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00025",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -408,11 +308,7 @@
     "Price": 1400,
     "Cost": 1200,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00026",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -424,11 +320,7 @@
     "Price": 2100,
     "Cost": 2000,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00027",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -440,11 +332,7 @@
     "Price": 1200,
     "Cost": 1000,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00028",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -456,11 +344,7 @@
     "Price": 900,
     "Cost": 700,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00029",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -472,11 +356,7 @@
     "Price": 800,
     "Cost": 600,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00030",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -488,11 +368,7 @@
     "Price": 90,
     "Cost": 50,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00031",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -504,11 +380,7 @@
     "Price": 150,
     "Cost": 100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00032",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -520,11 +392,7 @@
     "Price": 120,
     "Cost": 100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00033",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -536,11 +404,7 @@
     "Price": 120,
     "Cost": 100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00034",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -552,11 +416,7 @@
     "Price": 240,
     "Cost": 200,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00035",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -568,11 +428,7 @@
     "Price": 120,
     "Cost": 100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00036",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -584,11 +440,7 @@
     "Price": 140,
     "Cost": 100,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00037",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -600,11 +452,7 @@
     "Price": 200,
     "Cost": 150,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00038",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -616,11 +464,7 @@
     "Price": 100,
     "Cost": 60,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00039",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -632,11 +476,7 @@
     "Price": 50,
     "Cost": 40,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00040",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -648,11 +488,7 @@
     "Price": 50,
     "Cost": 40,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00041",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   },
   {
@@ -664,11 +500,7 @@
     "Price": 80,
     "Cost": 50,
     "ImageUrl": "Files\\Images\\Catalog\\Products\\default.png",
-    "Tax": 1,
-    "TaxMethod": "VAT",
     "BarcodeSymbology": "BC00042",
-    "IsAlert": false,
-    "AlertQuantity": 0,
     "Detail": "Sample Data"
   }
 ]

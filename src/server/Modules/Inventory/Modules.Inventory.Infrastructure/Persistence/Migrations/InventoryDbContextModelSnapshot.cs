@@ -38,7 +38,13 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("StoreId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("Stocks", "Inventory");
                 });
@@ -57,6 +63,9 @@ namespace FluentPOS.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
