@@ -1,131 +1,263 @@
 <p align="center">
-  <a href="https://github.com/fluentpos/fluentpos">
-    <img src="https://codewithmukesh.com/wp-content/uploads/2021/06/fluentposBanner.png" alt="fluentpos">
-  </a>
-  <h3 align="center">fluentpos - Open Source Point Of Sales / Inventory Management Solution</h3>
+  <h3 align="center">FluentPOS — Multi-Site Cloud EPOS</h3>
   <p align="center">
-    Built with ASP.NET Core 5.0 WebAPI & Angular 13 Material UI
+    A modular-monolith point-of-sale and inventory platform built with ASP.NET Core 10 and PostgreSQL,
+    with an offline-first till client.
   </p>
 </p>
 
-## Archived
+---
 
-Archiving this REPO and will create new project using Microservice Architecture within this same handle.
+## What this is
 
-### About fluentpos
+This repository is a **working fork of [fluentpos/fluentpos](https://github.com/fluentpos/fluentpos)**
+(archived upstream, ASP.NET Core 5 + Angular 12), being transformed into a cloud-native, multi-site,
+API-driven EPOS in which **each store is a node in a network governed by a central cloud core**.
 
-Having quite a lot of experience with POS & Inventory Management system, we set out to build out a full fledged open source system using our favorite tech stack and tools. Modular development was a prime requirement for us when we got started. Adapting to a Microservice architecture was the first choice we had. But given the complexities with the mentioned architecture, we decided to stay away from it atleast for the starting. 
+Four phases of that transformation are complete:
 
-There actually was no real need to implement microservices. fluentpos was meant to help businesses in their day-to-day activities. For this, a well designed monolith application would also do the trick. We were clear to have the API and UI seperated, to give oppurtunities to multiple client apps in the future.
+| Phase | Delivered | Status |
+|---|---|---|
+| **0 — Foundation hardening** | .NET 10, Docker + compose, health checks, JWT hardening, Redis, UK VAT rates, real payment records, product barcodes, CI | ✅ |
+| **1 — Multi-store core** | Organization/Store/Terminal model, tenancy via EF global query filters, store-scoped stock and orders, `StoreProduct` price overlays, store-scoped tokens | ✅ |
+| **2 — Retail operations** | Purchasing (suppliers, POs, goods-in), auto-replenishment, till sessions with X/Z reports and cash reconciliation, refunds, Challenge 25 | ✅ |
+| **3 — Store-node resilience** | Offline-first POS PWA with IndexedDB catalog cache and durable sale outbox, incremental sync protocol, idempotent checkout, terminal device auth + operator PIN | ✅ |
+| **4 — Chain & franchise layer** | Multi-organization tenancy with royalty rates, event-projected sales reporting, royalty accrual, wholesaler price-file import and PO export | ✅ (webhooks deferred) |
+| **5 — Next** | Transactional outbox, integration tests, client replacement, card payments | 📋 See [the plan](EPOS_TRANSFORMATION_PLAN.md#5-where-we-are-and-what-is-next) |
 
-For API, ASP.NET Core 5.0 was our obvious choice. As for the UI, we decided to go with Angular 12 Material UI.
+The full assessment, target architecture, and sequenced backlog live in
+**[EPOS_TRANSFORMATION_PLAN.md](EPOS_TRANSFORMATION_PLAN.md)** — read it to understand *why* the code
+looks the way it does.
 
-The WebAPI application had to be highly modular to improve development experience. This needed breaking down the application to logical modules like Identity, Catalog, Sales, Inventory. Each of these modules has its own controllers / interfaces / dbContext. As for the DB providers, postgres / mssql will be used. One module cannot directly talk to the other module nor modify its table. CrossCutting concerns would use interfaces/ events. And yes, domain events are also included in the project using mediatr Handler. Each of the module follows a clean architecture design / Onion / Hex.
+---
 
-fluentpos was meant for retail businesses. The modular monolith architecture would help us to extend fluentpos to support other business modules like cafe, restaurant, warehouses and so.
+## Quick start
 
-### Roadmap
+### Docker (fastest — needs only Docker)
 
-For the initial release, you can track the progress and included tasks here - https://github.com/fluentpos/fluentpos/milestone/1
+```bash
+git clone <this-repo> && cd fluentpos
+cp .env.example .env
+# Set JWT_KEY in .env to 32+ random characters — compose will not start without it
+docker compose up --build
+```
 
-PS, we will be adding in more requirements.
+API at <http://localhost:5000> · Swagger at `/swagger` · POS till at `/pos`.
 
-### Note to contributors
+### Local (for development — needs .NET 10 SDK + PostgreSQL)
 
-- Identify / Create tasks from / to https://github.com/fluentpos/fluentpos/issues
-- Assign it to yourself
-- Create a branch from the master branch and name it according to the Issue Id. For ex, if the Issue id is #70, create a branch 'fluentpos-70'
-- Make your changes in this branch
-- Get it reviewed from one of the Core Team Members
-- Submit a PR
-- Get it Merged to the Master Branch
+```bash
+# 1. Point the API at your PostgreSQL
+#    src/server/API/appsettings.json → PersistenceSettings.ConnectionStrings.postgres
 
-### Technology Stack :muscle:
+# 2. Run it — the database is created, migrated and seeded automatically
+dotnet run --project src/server/API
+```
 
-- API - ASP.NET Core 5.0 WebAPI
-- Client - Angular 12 Material
-- Data Access - [Entity Framework Core 5.0](https://docs.microsoft.com/en-us/ef/core/)
-- DB Providers - Postgres, MSSQL
+Then log in:
 
-### Project Status
+```bash
+curl -s -X POST http://localhost:5000/api/v1/identity/tokens \
+  -H "Content-Type: application/json" \
+  -d '{"email":"superadmin@fluentpos.com","password":"123Pa$$word!"}'
+```
 
-- API - `In Progress`
-- Angular Project - `In Progress`
-- Seperate Website to maintain documentation - `Coming Soon!`
-- Docker Container - `Coming Soon!`
+Full walkthrough, including the Angular client: **[docs/getting-started.md](docs/getting-started.md)**.
 
-### Getting Started
+---
 
-> fluentpos is in it's early development stage.
+## Documentation
 
-Clone this repository to your local machine.
+**→ Start at [docs/README.md](docs/README.md)**
 
-#### Prerequisites to run API
+| Doc | Answers |
+|---|---|
+| [Getting Started](docs/getting-started.md) | Install, configure, run, log in, run both clients |
+| [Architecture](docs/architecture.md) | Modules, tenancy, CQRS, eventing, sync protocol, config reference |
+| [Users & Access](docs/users-and-access.md) | Roles, permissions, store scoping, creating users, till PINs, franchisee onboarding |
+| [Seed Data](docs/seed-data.md) | What is in the database after a fresh boot; fixed GUIDs; resetting |
+| [API Reference](docs/api-reference.md) | Every endpoint with its required permission |
+| [Testing Guide](docs/testing-guide.md) | Automated tests plus ten end-to-end manual scenarios |
+| [Build, Run & Deploy](docs/deployment.md) | Docker, compose, secrets, migrations as a release step, production checklist |
+| [Troubleshooting](docs/troubleshooting.md) | Startup, auth, tenancy, migrations, client and PWA problems |
 
-1. Install the latest [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)
-2. Install the latest DOTNET & EF CLI Tools by using this command `dotnet tool install --global dotnet-ef` 
-3. Install the latest version of Visual Studio IDE 2019 (v16.8 and above) OR Visual Studio Code 🚀
-4. It's recommended to use Postgres DB as it comes by default with fluentpos. Install [PostgreSQL](https://www.postgresql.org/download/). 
-5. As for quick DB Management, we love [Azure Data Studio](https://docs.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15)
+Also: [UBIQUITOUS_LANGUAGE.md](UBIQUITOUS_LANGUAGE.md) (domain vocabulary) ·
+[CONTRIBUTING.md](CONTRIBUTING.md) · [CLAUDE.md](CLAUDE.md) / [AGENTS.md](AGENTS.md) (AI agent
+conventions).
 
-#### Running the API
+---
 
-1. Open up `FluentPOS.sln` in Visual Studio 2019.
-2. Navigate to appSettings.json under `src/Api/Bootstrapper/appsettings.json`
-3. Add you PostgreSQL connection string under `PersistenceSettings`. The default connection string is `"postgres": "Host=localhost;Database=fluentpos;Username=postgres;Password=root"`
-4. That's everything you need to setup the API. Just build and run the API project.
-5. By default, the database is migrated and latest changes are applied.
-6. Some default data is also seeded to this database like roles, users, brands, products etc.
+## Architecture at a glance
 
-> Not interested with PostgreSQL? You can easily switch to MSSQL by following this [guide]( https://github.com/fluentpos/fluentpos/blob/master/docs/api-switching-database-provider-tutorial.md).
+A **modular monolith**: one deployable API composed of isolated modules, each following Clean
+Architecture. Modules never reference each other's projects or tables — they communicate through
+interfaces in `Shared.Core` and MediatR notifications. One PostgreSQL database, one schema per module.
 
-#### Running Angular
+```
+                    ┌──────────────────────────────────────────────┐
+                    │              CENTRAL CLOUD CORE              │
+                    │   Identity · Organizations · Catalog         │
+                    │   People · Sales · Inventory                 │
+                    │   Purchasing · Reporting                     │
+                    │   Tenancy via EF global query filters        │
+                    └───────┬───────────────┬───────────────┬──────┘
+                            │  HTTPS · incremental catalog sync
+                            │  · idempotent client-owned sales
+                ┌───────────┴───┐   ┌───────┴───────┐   ┌───┴───────────┐
+                │  STORE NODE 1 │   │  STORE NODE 2 │   │  STORE NODE N │
+                │ offline-first │   │               │   │  (franchisee: │
+                │ PWA till      │   │               │   │  scoped view) │
+                │ IndexedDB     │   │               │   │               │
+                │ sale outbox   │   │               │   │               │
+                └───────────────┘   └───────────────┘   └───────────────┘
+```
 
-- Navigate to fluentpos\src\client via terminal.
-- Run `npm install` to install all the required packages
-- Run `ng serve`
-- Navigate to localhost:4200 on your browser
+### Modules
 
-#### Visual Studio Code
-1. Open up `fluentpos.code-workspace` inside fluentpos\workspace
-2. Make sure you have Visual Studio Code installed as well as .NET and Angular related extensions
-3. Open terminal session
-4. Running API with CLI command: `dotnet watch run --project API`
+| Module | Route prefix | Owns |
+|---|---|---|
+| Identity | `api/v1/identity/*` | Users, roles, permission claims, JWT, PIN/device sign-in |
+| Organizations | `api/v1/organization/*` | Organizations, stores, terminals, franchisee onboarding |
+| Catalog | `api/v1/catalog/*` | Products, brands, categories, VAT rates, store overlays, sync feed |
+| People | `api/v1/people/*` | Customers, carts |
+| Sales | `api/v1/sales/*` | Orders, payments, refunds, till sessions |
+| Inventory | — | Per-store stock (consumed via `IStockService`) |
+| Purchasing | `api/v1/purchasing/*` | Suppliers, purchase orders, replenishment, price files |
+| Reporting | `api/v1/reporting/*` | Daily store sales read model, royalty accrual |
+| Accounting | — | Empty shell — csproj files only, not wired into the host |
 
-https://user-images.githubusercontent.com/31455818/126076884-47989b52-368e-4714-b90b-093779a7607f.mp4
+Deeper: [docs/architecture.md](docs/architecture.md).
 
-POS UI - As of 25/7/2021
+### Key design decisions
 
-https://user-images.githubusercontent.com/31455818/126880716-67545770-e74c-4e20-b42f-8c247e91f834.mp4
+- **Tenancy is enforced by the data model, not by discipline.** Every entity implementing
+  `IMustHaveStore` gets an EF global query filter driven by the caller's `storeId` token claim, and is
+  auto-stamped on insert. Store isolation is the default.
+- **Central master data, per-store overrides.** Add a product once; every store inherits it. A
+  `StoreProduct` overlay row optionally overrides sell price, ranging, reorder point and preferred
+  supplier.
+- **Checkout is idempotent.** The POS client owns the basket and submits a complete sale document
+  whose device-generated UUID *is* the order id — so a sale queued offline can be replayed blindly
+  without ever double-charging.
+- **Offline-first client, not edge servers.** Each till caches the catalog and queues sales locally;
+  the cloud stays the source of truth. The protocol was designed so an edge-server model remains
+  possible later.
 
+---
 
+## Technology stack
 
+| Layer | Choice |
+|---|---|
+| API | ASP.NET Core **10** WebAPI, API versioning (v1/v2), Swagger/OpenAPI |
+| Patterns | Modular monolith, Clean Architecture per module, CQRS via **MediatR 14** |
+| Data | **EF Core 10**, PostgreSQL (default) or MSSQL, schema per module |
+| Validation / mapping | FluentValidation, AutoMapper |
+| Auth | JWT bearer, claim-based fine-grained permissions, ASP.NET Identity |
+| Jobs | Hangfire (Postgres-backed), dashboard at `/jobs` |
+| Cache | In-memory, or Redis via `CacheSettings.UseRedis` |
+| Logging | Serilog |
+| Ops | Docker, docker-compose, `/health/live` + `/health/ready` |
+| POS client | Dependency-free PWA (IndexedDB + service worker), served at `/pos` |
+| Back office | Angular 12 Material — **legacy**, pre-multi-store features only |
 
+---
 
-#### Default Credentials
+## Repository layout
 
-- superadmin - superadmin@fluentpos.com / 123Pa$$word!
-- staff - staff@fluentpos.com / 123Pa$$word!
+```
+src/server/API/                    Host, Startup, appsettings, PosClient/ (the PWA)
+src/server/Modules/<Name>/         Modules.<Name>.Core · .Infrastructure · (controllers)
+src/server/Shared/                 Shared.Core · Shared.DTOs · Shared.Infrastructure
+src/client/                        Angular 12 back-office app
+docs/                              Documentation — start at docs/README.md
+postman/                           API collection (predates the multi-store work)
+docker-compose.yml                 API + PostgreSQL 16 + Redis 7
+migrate-database.ps1               Applies migrations for all nine DbContexts
+EPOS_TRANSFORMATION_PLAN.md        Assessment, roadmap, phase status, backlog
+UBIQUITOUS_LANGUAGE.md             Domain vocabulary
+```
 
-You can use these credentials to generate jwt tokens in the `api/identity/tokens` endpoint.
+---
 
+## Common commands
 
+```bash
+# Server
+dotnet build src/server/FluentPOS.sln          # 0 errors (~85 StyleCop warnings are known/benign)
+dotnet test  src/server/FluentPOS.sln          # 33 unit tests
+dotnet run   --project src/server/API
+dotnet watch run --project src/server/API      # hot reload
 
+# Migrations (only needed when MigrateOnStartup is off)
+./migrate-database.ps1
 
-### Note
+# Client — needs Node 14/16; Angular 12 will not build on modern Node
+cd src/client && npm install && npm run start  # http://localhost:4200
 
-Since fluentpos is in it's early development stage, I have not been able to write detailed documentation about the implementation. You can expect quite a lot of content around this architecture on my blog [@codewithmukesh](https://codewithmukesh.com/) in the upcoming days.
+# Docker
+docker compose up --build -d
+docker compose logs -f api
+docker compose down -v                         # also wipes the database
+```
 
-### The Team
+---
 
-- Mukesh Murugan [@iammukeshm](https://github.com/iammukeshm/)
-- Chhin Sras [@chhinsras](https://github.com/chhinsras)
-- Nikolay Chebotov [@unchase](https://github.com/unchase)
+## Default credentials
 
-### Community
+Seeded on first run. **Change these before exposing the API to anyone.**
 
-- Discord [@fluentpos](https://discord.gg/PAErG25QPK)
+| Email | Password | Role | Scope |
+|---|---|---|---|
+| `superadmin@fluentpos.com` | `123Pa$$word!` | SuperAdmin | Head office — every permission |
+| `staff@fluentpos.com` | `123Pa$$word!` | Staff | Store One |
+| `franchisee@fluentpos.com` | `123Pa$$word!` | Manager | Northern Franchise Ltd |
+
+Note that of the six seeded roles, **only SuperAdmin, Staff and Manager receive any permissions** —
+Admin, Accountant and Cashier are name-only placeholders. Details:
+[docs/users-and-access.md](docs/users-and-access.md).
+
+---
+
+## Project status
+
+**This is pre-production.** It runs, it is coherent, and the retail flows work end to end — but read
+[deployment.md § what is still missing](docs/deployment.md#what-is-still-missing-for-production)
+before deploying anything. The headlines:
+
+- **No transactional outbox** — events are in-process only. Blocks webhooks and durable store sync.
+  Highest-priority next piece of work.
+- **No integration tests** — 33 unit tests cover domain logic; nothing covers HTTP + EF query filters
+  + permissions together.
+- **The Hangfire dashboard at `/jobs` is unauthenticated.**
+- **No card-payment integration.**
+- **The Angular client is EOL** and has no UI for stores, purchasing, till sessions, refunds or
+  reporting — those are API-only today.
+
+---
+
+## Contributing
+
+- Branch naming: `fluentpos-<issueId>`, targeting `master`.
+- Commit messages: present tense with a scope prefix — `API: add product search endpoint`,
+  `NG: fix cart total calculation`, `docs: ...`.
+- C#: StyleCop via `src/server/stylecop.json` and `src/server/fluentpos.ruleset`. 4-space indent.
+- Run `dotnet build` and `dotnet test` before opening a PR.
+- Respect the module boundaries — no cross-module project references, no writing to another module's
+  tables. See [architecture.md § cross-module rules](docs/architecture.md#cross-module-communication-rules).
+- Add tests for domain logic changes; see [testing-guide.md](docs/testing-guide.md#writing-new-tests).
+
+More: [CONTRIBUTING.md](CONTRIBUTING.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+---
+
+## Credits
+
+Original FluentPOS by Mukesh Murugan ([@iammukeshm](https://github.com/iammukeshm/)),
+Chhin Sras ([@chhinsras](https://github.com/chhinsras)), and
+Nikolay Chebotov ([@unchase](https://github.com/unchase)). Upstream is archived; this fork continues
+from it.
 
 ## License
 
-This project is licensed with the [MIT license](LICENSE).
+[MIT](LICENSE).

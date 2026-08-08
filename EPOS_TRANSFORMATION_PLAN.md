@@ -357,3 +357,124 @@ Prepares the ground; no functional change visible to users.
 5. **Build-vs-buy checkpoint** — re-evaluate at the end of Phase 1. If the platform is not itself
    the business asset, a commercial EPOS plus this codebase's central-reporting layer may be the
    faster route to store #1.
+
+---
+
+## 5. Where we are and what is next
+
+**Date:** 2026-08-08 · **Branch:** `Phase_04` · **Build:** 0 errors (~85 StyleCop warnings) ·
+**Tests:** 33 passing across 4 projects
+
+### 5.1 Current state, honestly
+
+Phases 0–4 are complete and verified end-to-end on a fresh database. What exists today is a coherent
+multi-store EPOS **core**: central master data with per-store overrides, tenancy enforced at the EF
+query-filter level, purchasing and replenishment, till sessions with cash reconciliation, refunds,
+Challenge 25, an offline-capable till, and franchise-scoped reporting with royalty accrual.
+
+What it is **not** yet: production-ready, observable, or usable by a non-technical operator. The
+back-office UI covers only the pre-multi-store feature set, so everything built in Phases 1–4 is
+API-only. Nothing has taken a card payment. Nothing has been load-tested.
+
+The three gaps that matter most, in order:
+
+1. **No transactional outbox.** Domain events are in-process MediatR notifications. A crash between
+   the commit and the handler silently loses the reporting projection for that sale, and the whole
+   category of outbound integration (webhooks, delivery platforms, partner APIs, durable store sync)
+   is blocked on it. This was called out as "the cheapest insurance in the plan" in §4 and is now the
+   single highest-value piece of remaining work.
+2. **No integration tests.** The 33 unit tests cover domain arithmetic. Nothing exercises HTTP +
+   permission policies + EF global query filters together — which is exactly where a tenancy leak
+   would appear. Every tenancy guarantee in this document is currently verified only by the manual
+   scenarios in `docs/testing-guide.md`. That is not a regression net.
+3. **The client story is unresolved.** Angular 12 is EOL and was flagged as a Phase 0 decision in
+   §4.1; it is still undecided. The offline-first POS PWA proves the protocol but is a reference
+   implementation, not a product.
+
+Full running list of known debt: `docs/architecture.md § known architectural debt` and
+`docs/deployment.md § what is still missing for production`.
+
+### 5.2 Phase 5 — Durability & confidence
+
+The theme is *trust what we built*, not add features.
+
+1. **Transactional outbox** (largest item; unblocks the most)
+   - `OutboxMessage` table written in the same transaction as the aggregate. The hook already exists:
+     `ModuleDbContextExtensions.SaveChangeWithPublishEventsAsync`.
+   - Hangfire recurring dispatcher with retry + exponential backoff and a dead-letter table.
+   - Versioned integration-event contracts in `Shared.DTOs`.
+   - Migrate `OrderRegistered` / `OrderRefunded` onto it, keeping in-process MediatR for genuinely
+     in-process handlers. Introduce a real broker (RabbitMQ / Azure Service Bus) only when consumers
+     multiply — Hangfire-as-bus is enough for now.
+2. **Integration test project** — `WebApplicationFactory` + Testcontainers PostgreSQL. Minimum
+   coverage before it counts as done: store isolation (404/403 across the boundary), price-override
+   resolution at checkout, checkout idempotency, permission enforcement per role, reporting scope for
+   store/franchisee/franchisor. Wire it into `dotnet.yml`.
+3. **Operational hardening** — authorization filter on the Hangfire dashboard, OpenTelemetry traces
+   and metrics, Redis in the readiness check, non-root container user, `.dockerignore`, rate limiting.
+4. **Tenant bootstrap path** — with `SeedOnStartup=false` a clean database has no organization and no
+   default store, so store-scoped inserts cannot resolve one. Provide a first-run provisioning
+   command or endpoint.
+5. **Admin APIs for the gaps found in Phases 1–4** — assign a user to a store/organization (currently
+   seed/DB-only), manage a role's permissions coherently, and per-terminal receipt numbering.
+
+**Exit criteria:** a sale's reporting projection survives a hard process kill between commit and
+dispatch; CI fails when a tenancy filter is removed; `/jobs` requires auth; a clean database can be
+provisioned into a working tenant without seed data.
+
+### 5.3 Phase 6 — Product surface
+
+Once the core is trustworthy, make it usable.
+
+1. **Decide the client stack and rewrite the back office.** Recommendation: a single modern SPA
+   (Angular 20 or React) covering stores, terminals, store-product overlays, suppliers, purchase
+   orders, replenishment review, till sessions, refunds, reporting and royalties. The offline-first
+   requirement is already satisfied by a separate till client, so the back office can be online-only —
+   which makes this a much smaller decision than it looked in §4.1.
+2. **Promote the POS PWA to a product**: PIN + device-key sign-in (the API already supports it,
+   the client does not use it), barcode-scanner input, receipt printing, catalog tombstones so deleted
+   products leave device caches, and server-side dead-lettering for permanently rejected sales.
+3. **Retail gaps deferred from Phase 2**: partial refunds, per-terminal receipt numbering, promotions
+   and loyalty.
+4. **Reporting depth**: hourly and category sales dimensions, and margin — which requires snapshotting
+   cost on order lines, so add that field before the data you want to report on accumulates.
+
+### 5.4 Phase 7 — Commercial integrations
+
+1. **Card payments.** Out of scope of this codebase today but on the critical path for a real store.
+   Start the commercial conversation (Dojo / SumUp / Adyen) well ahead of the engineering — §4.4 flagged
+   this during Phase 1 and it is still open.
+2. **Outbound webhooks and a delivery-platform partner API** — deferred from Phase 4 pending the
+   outbox. Needs subscription management, payload signing, and retry semantics.
+3. **More wholesaler adapters** beyond the Booker/Bestway CSV shape.
+
+### 5.5 Suggested sequencing
+
+```
+Now ──▶ Outbox + integration tests        (Phase 5.1, 5.2 — do these in parallel; both are
+        │                                  foundational and neither blocks the other)
+        ├──▶ Ops hardening + tenant bootstrap   (5.3, 5.4 — small, unblocks any real deployment)
+        │
+        ├──▶ Client decision                (make the call early; the rewrite is long lead-time)
+        │       └──▶ Back-office rewrite ──▶ POS PWA productisation
+        │
+        └──▶ Card payments commercial track (start now, runs in parallel with everything)
+```
+
+Do **not** start Phase 6 feature work before 5.1 and 5.2 land. Adding surface area on top of
+fire-and-forget eventing and an untested tenancy filter compounds the risk that already exists.
+
+### 5.6 Decisions still owed
+
+| Decision | Owed since | Blocks |
+|---|---|---|
+| Client stack for the back office | Phase 0 (§4.1) | All of Phase 6 |
+| Card-payment provider | Phase 1 (§4.4) | Opening a real store |
+| Broker (Hangfire-as-bus vs. RabbitMQ/ASB) | Phase 5.1 | Webhooks, partner API |
+| Build-vs-buy re-evaluation (§4.5) | End of Phase 1 — **never formally revisited** | Everything |
+| Fate of the empty `Modules.Accounting.*` shell — fill it or drop it from the solution | Phase 2 | Nothing, but it is misleading |
+
+§4.5's build-vs-buy checkpoint deserves a deliberate answer rather than drift. The original framing
+holds: building is defensible if the EPOS platform is itself the asset — the thing licensed to
+franchisees — and the franchise layer delivered in Phase 4 is evidence that is the intent. Worth
+stating explicitly so the next twelve months of effort are a decision rather than momentum.
